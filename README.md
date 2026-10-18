@@ -1,102 +1,68 @@
-# 🕊️ Kahta Taziye Otomasyonu, Firestore Senkronizasyonu & Mobil Bildirim Sistemi
+# 🕊️ Antikor 8.0 Taziye Sistemi
 
-Bu proje, [taziye.kahta.bel.tr](https://taziye.kahta.bel.tr/) sitesindeki taziye ilanlarını periyodik olarak tarayan, **Cloud Firestore** veritabanına otomatik aktaran ve Google Play'deki **Android (Java)** uygulamanıza **Firebase Cloud Messaging (FCM)** üzerinden anlık bildirim gönderen uçtan uca otomasyon sistemidir.
+> **Bu proje Antikor 8.0 Taziye Sistemidir.**
 
----
-
-## 📋 Genel Özellikler
-
-- **Akıllı Web Scraper:** Belediye portalındaki taziye kartlarını ve `modal.php` üzerinden detaylı defin, taziye evi ve akrabalık bilgilerini çeker.
-- **Mükerrer Kontrolü:** Her taziye ilanının belediye ID'sini (`kahta_809` vb.) baz alarak Firestore'da sadece yeni eklenen kayıtları tespit eder.
-- **FCM Topic Bildirimi:** Yeni bir ilan düştüğü anda kayıtlı tüm kullanıcılara başlık, özet ve taziye evi bilgilerini içeren bildirim iletir.
-- **Admin App ile %100 Uyum:** Admin uygulamanızdan elle girdiğiniz ilanlar bozulmaz. Belediye ilanları `kaynak: "belediye_otomatik"`, admin ilanları `kaynak: "admin_manuel"` olarak etiketlenir.
-- **GitHub & Vercel Dağıtımı:** Vercel üzerinde sıfır sunucu maliyetiyle serverless çalışır; GitHub Actions ile 10-15 dakikada bir otomatik tetiklenir.
+Bu sistem, [taziye.kahta.bel.tr](https://taziye.kahta.bel.tr/) üzerindeki taziye ilanlarını 7/24 periyodik olarak tarayan, **Cloud Firestore** veritabanına otomatik senkronize eden ve Google Play'deki **Android (Java)** mobil uygulamanıza **Firebase Cloud Messaging (FCM)** üzerinden anlık push bildirim gönderen yüksek erişilebilirlikli, sunucusuz (serverless) bir otomasyon altyapısıdır.
 
 ---
 
-## 🛠️ Kurulum ve Dağıtım Adımları
+## 🏛️ Mimari Şema
 
-### 1. Firebase Hizmet Hesabı Anahtarını (Service Account) Alma
-1. [Firebase Console](https://console.firebase.google.com/)'a gidin ve projenizi açın.
-2. ⚙️ **Proje Ayarları** > **Hizmet Hesapları (Service accounts)** sekmesine gelin.
-3. **Yeni özel anahtar oluştur (Generate new private key)** butonuna tıklayın.
-4. İnen `.json` dosyasını açın. Bu dosyadaki tüm içeriği kopyalayın (tek satır string veya Base64 olarak saklayabilirsiniz).
+```mermaid
+flowchart TD
+    subgraph Kaynak ["🏛️ Veri Kaynağı"]
+        KB["taziye.kahta.bel.tr\n(Kahta Belediyesi Portalı)"]
+    end
 
----
+    subgraph Zamanlayici ["⏰ 7/24 Otomatik Tetikleyici"]
+        GHA["GitHub Actions (Cron)\n(Her 15 dakikada bir ücretsiz)"]
+    end
 
-### 2. GitHub Deposu Oluşturma ve Kodu Yükleme
-Proje klasörünüzde terminali açın:
+    subgraph Bulut ["⚡ Vercel Serverless API (Node.js & TypeScript)"]
+        Scraper["Scraper Motoru\n(Cheerio & Fetch)"]
+        DiffEngine["Mükerrerlik & Fark Motoru\n(kahta_{belediyeId} Kontrolü)"]
+        FCMService["FCM Bildirim Servisi\n(Topic: /topics/taziyeler)"]
+        REST["REST API Uç Noktaları\n(/api/sync & /api/taziyeler)"]
+    end
 
-```bash
-git init
-git add .
-git commit -m "feat: Kahta taziye scraper and fcm notification service"
-git branch -M main
-git remote add origin https://github.com/KULLANICI_ADINIZ/kahta-taziye-sync.git
-git push -u origin main
+    subgraph FirebaseKatmani ["🔥 Firebase Ekosistemi"]
+        Firestore[("Cloud Firestore\n(taziyeler koleksiyonu)")]
+        FCM["Firebase Cloud Messaging (FCM)"]
+    end
+
+    subgraph MobilKatman ["📱 Mobil Uygulama Ekosistemi"]
+        App["📱 Google Play Mobil Uygulaması\n(Android - Java)"]
+        AdminApp["🛠️ Admin Uygulaması\n(Manuel Giriş & Kontrol)"]
+    end
+
+    GHA -->|GET /api/sync + Bearer CRON_SECRET| Scraper
+    KB -->|HTML / POST modal.php| Scraper
+    Scraper --> DiffEngine
+    DiffEngine <-->|Belge kontrolü (exists)| Firestore
+    DiffEngine -->|Yeni kayıt durumunda ekle| Firestore
+    DiffEngine -->|Yeni kayıt durumunda tetikle| FCMService
+    FCMService -->|Topic Bildirimi| FCM
+    FCM -->|Push Bildirim| App
+    Firestore <--> App
+    Firestore <--> AdminApp
+    REST --> Scraper
 ```
 
 ---
 
-### 3. Vercel Dağıtımı ve Ortam Değişkenleri (Environment Variables)
-1. [Vercel](https://vercel.com/) paneline giriş yapın ve **Add New Project** diyerek GitHub deponuzu seçin.
-2. **Environment Variables** bölümüne şunları ekleyin:
-   - `FIREBASE_SERVICE_ACCOUNT`: Firebase'den indirdiğiniz JSON metninin tamamı.
-   - `FIRESTORE_COLLECTION`: `taziyeler` (veya uygulamanızın kullandığı koleksiyon adı).
-   - `FCM_TOPIC`: `taziyeler` (Android uygulamanızın abone olduğu konu).
-   - `CRON_SECRET`: Güçlü bir şifre (örnek: `kahta_guvenli_taziye_token_2026`).
-3. **Deploy** butonuna basın. Projeniz dağıtılacak ve size bir URL verilecektir (örnek: `https://kahta-taziye-sync.vercel.app`).
+## 🚀 Temel Özellikler
+
+- **Çift Aşamalı Akıllı Scraper:** Ana sayfadaki taziye kartlarının yanı sıra `modal.php` uç noktasından cenaze namazı saati, defin yeri, mezarlık, taziye evi ve akrabalık bağları gibi tüm derinlikli bilgileri çeker.
+- **%100 Mükerrer Kayıt Koruması (Deduplication):** Her ilanın belediye ID'sini (`kahta_809` vb.) benzersiz bir belge kimliği (Document ID) olarak kullanır. Sistem daha önce eklenen kayıtları atlar ve kullanıcılara aynı bildirimi asla tekrar göndermez.
+- **Anlık FCM Push Bildirimi:** Yeni bir vefat ilanı eklendiğinde kayıtlı tüm Android kullanıcılara özelleştirilmiş başlık ve taziye evi bilgisiyle yüksek öncelikli bildirim iletir.
+- **Admin App ile Çift Yönlü Uyumluluk:** Eskiden tek tek manuel girdiğiniz Admin uygulamasını kapatmanıza gerek kalmaz. Sistem otomatik çekilenleri `kaynak: "belediye_otomatik"`, admin ilanlarını `kaynak: "admin_manuel"` olarak etiketler; her iki kaynak Firestore'da kusursuz birlikte yaşar.
+- **Sıfır Sunucu Maliyeti (Serverless):** Vercel Serverless ve GitHub Actions altyapısı sayesinde 7/24 kesintisiz, sunucu kiralama ücreti olmadan çalışır.
 
 ---
 
-### 4. GitHub Actions ile 24/7 Ücretsiz Otomatik Tetikleme
-Vercel Hobby planında cron kısıtlamalarına takılmamak için GitHub Actions workflow'u hazırlandı:
-1. GitHub deponuzda **Settings** > **Secrets and variables** > **Actions** sayfasına gidin.
-2. **New repository secret** butonuna tıklayarak şu iki değişkeni ekleyin:
-   - `VERCEL_PROJECT_URL`: `https://kahta-taziye-sync.vercel.app` (Vercel adresiniz, sonunda `/` olmadan).
-   - `CRON_SECRET`: Vercel'e girdiğiniz `CRON_SECRET` şifresinin aynısı.
-3. Artık `.github/workflows/cron.yml` dosyası her 15 dakikada bir otomatik çalışarak Vercel'i tetikleyecektir.
-4. Ayrıca GitHub **Actions** sekmesinden istediğiniz zaman **Run workflow** diyerek testi hemen başlatabilirsiniz.
+## 📦 Firestore Veri Modeli
 
----
-
-## 📱 Android Uygulamanız (Java) İçin Entegrasyon Notları
-
-### 1. FCM Konu Aboneliği (Topic Subscription)
-Uygulamanız açıldığında (örneğin `MainActivity.java` içinde) kullanıcıları bildirim konusuna abone edin:
-
-```java
-import com.google.firebase.messaging.FirebaseMessaging;
-
-// MainActivity onCreate içinde:
-FirebaseMessaging.getInstance().subscribeToTopic("taziyeler")
-    .addOnCompleteListener(task -> {
-        if (task.isSuccessful()) {
-            Log.d("FCM", "Taziyeler konusuna abone olundu");
-        }
-    });
-```
-
-### 2. Firestore'dan Veri Çekme (Java)
-Verileri en yeni eklenen en üstte olacak şekilde dinleyin:
-
-```java
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-
-FirebaseFirestore db = FirebaseFirestore.getInstance();
-db.collection("taziyeler")
-    .orderBy("olusturulmaTimestamp", Query.Direction.DESCENDING)
-    .addSnapshotListener((value, error) -> {
-        if (error != null) {
-            return;
-        }
-        // Listenizi güncelleyin
-    });
-```
-
-### 3. Firestore Belge Şeması
-Otomasyonun Firestore'a yazdığı belge yapısı:
+Firestore `taziyeler` koleksiyonundaki her belgenin şeması:
 
 ```json
 {
@@ -116,21 +82,70 @@ Otomasyonun Firestore'a yazdığı belge yapısı:
   "ayrintiliYakinlik": "MAHMUT, İHSAN,RAMAZAN, İSMAİL VE ŞUAYİP YANAK'IN ANNESİ",
   "kaynak": "belediye_otomatik",
   "durum": "aktif",
-  "olusturulmaTarihi": "2026-10-18T22:11:46.954Z",
+  "olusturulmaTarihi": "2026-10-18T22:46:04.579Z",
   "olusturulmaTimestamp": "(Firestore ServerTimestamp)"
 }
 ```
 
 ---
 
-## 🧪 Yerel Ortamda Test Etme
+## 📱 Android (Java) Uygulama Entegrasyonu
 
-1. `.env.example` dosyasını kopyalayıp `.env` adıyla kaydedin ve bilgilerinizi doldurun.
-2. Yalnızca scraper çıktısını test etmek için:
-   ```bash
-   npm run test:scrape
-   ```
-3. Firestore ve FCM entegrasyonuyla beraber yerel test çalıştırmak için:
-   ```bash
-   npm run dev
-   ```
+### 1. FCM Bildirim Konusuna Abone Olma
+`MainActivity.java` sınıfınızın `onCreate` metodunda kullanıcıları taziye bildirim konusuna abone edin:
+
+```java
+import com.google.firebase.messaging.FirebaseMessaging;
+
+FirebaseMessaging.getInstance().subscribeToTopic("taziyeler")
+    .addOnCompleteListener(task -> {
+        if (task.isSuccessful()) {
+            Log.d("AntikorTaziye", "Taziyeler konusuna başarıyla abone olundu.");
+        }
+    });
+```
+
+### 2. Firestore'dan Verileri Dinleme
+Verileri en yeni eklenen ilan en üstte olacak şekilde dinleyin:
+
+```java
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+
+FirebaseFirestore db = FirebaseFirestore.getInstance();
+db.collection("taziyeler")
+    .orderBy("olusturulmaTimestamp", Query.Direction.DESCENDING)
+    .addSnapshotListener((snapshots, error) -> {
+        if (error != null) {
+            Log.e("AntikorTaziye", "Veri dinleme hatası", error);
+            return;
+        }
+        if (snapshots != null) {
+            // Listenizi güncelleyin
+        }
+    });
+```
+
+---
+
+## 🌐 API Uç Noktaları
+
+| Uç Nokta | Metot | Açıklama | Yetki |
+| :--- | :--- | :--- | :--- |
+| `/api/sync` | `GET` / `POST` | Taziye taramasını başlatır, Firestore'a kaydeder ve FCM bildirimi atar. | `CRON_SECRET` Gerekli |
+| `/api/taziyeler` | `GET` | Belediye sitesindeki mevcut ilanları ham JSON olarak listeler. | Herkese Açık |
+
+---
+
+## 👥 Hazırlayanlar
+
+- **Muhammed Yasin KORKUT**
+- **Tahircan ASLAN**
+
+---
+
+## 📄 Lisans & Telif Hakkı
+
+Bu yazılım [MIT Lisansı](LICENSE) kapsamında lisanslanmıştır.
+
+**© 2023 Korkut Teknoloji, Yazılım ve Medya A.Ş.** Tüm hakları saklıdır.
