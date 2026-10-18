@@ -1,0 +1,32 @@
+{
+  "name": "kahta-taziye-sync",
+  "version": "1.0.0",
+  "description": "Kahta Belediyesi Taziye İlanları Otomasyonu, Firestore Senkronizasyonu ve FCM Bildirim Sistemi",
+  "main": "api/sync.ts",
+  "scripts": {
+    "dev": "ts-node src/cli.ts",
+    "build": "tsc",
+    "test:scrape": "ts-node src/test-scraper.ts"
+  },
+  "keywords": [
+    "taziye",
+    "kahta",
+    "scraper",
+    "firestore",
+    "fcm",
+    "vercel",
+    "github-actions"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.7",
+    "firebase-admin": "^13.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  }
+}
