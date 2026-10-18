@@ -38,7 +38,7 @@ flowchart TD
     GHA -->|GET /api/sync + Bearer CRON_SECRET| Scraper
     KB -->|HTML / POST modal.php| Scraper
     Scraper --> DiffEngine
-    DiffEngine <-->|Belge kontrolü (exists)| Firestore
+    DiffEngine <-->|"Belge kontrolü (exists)"| Firestore
     DiffEngine -->|Yeni kayıt durumunda ekle| Firestore
     DiffEngine -->|Yeni kayıt durumunda tetikle| FCMService
     FCMService -->|Topic Bildirimi| FCM
