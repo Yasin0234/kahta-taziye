@@ -15,7 +15,10 @@ jobs:
       - name: Vercel Sync Endpoint Çağrısı
         run: |
           echo "🚀 Kahta Taziye senkronizasyonu başlatılıyor..."
-          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X GET "${{ secrets.VERCEL_PROJECT_URL }}/api/sync" \
+          TARGET_URL="https://kahta-taziye.vercel.app/api/sync"
+          echo "Hedef URL: $TARGET_URL"
+
+          RESPONSE=$(curl -s -L -w "\nHTTP_STATUS:%{http_code}" -X GET "$TARGET_URL" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}")
           
           HTTP_BODY=$(echo "$RESPONSE" | sed -e '$d')
