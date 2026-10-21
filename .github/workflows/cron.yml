@@ -2,8 +2,8 @@ name: Kahta Taziye Otomatik Senkronizasyon
 
 on:
   schedule:
-    # Her 15 dakikada bir otomatik çalışır
-    - cron: '*/15 * * * *'
+    # Her 1 saatte bir (saat başı) otomatik çalışır
+    - cron: '0 * * * *'
   # GitHub arayüzünden tek tıkla manuel tetikleme imkanı
   workflow_dispatch:
 
