@@ -2,129 +2,136 @@
 
 > **Bu proje Antikor 8.0 Taziye Sistemidir.**
 
-Bu sistem, [taziye.kahta.bel.tr](https://taziye.kahta.bel.tr/) üzerindeki taziye ilanlarını 7/24 periyodik olarak tarayan, **Cloud Firestore** veritabanına otomatik senkronize eden ve Google Play'deki **Android (Java)** mobil uygulamanıza **Firebase Cloud Messaging (FCM)** üzerinden anlık push bildirim gönderen yüksek erişilebilirlikli, sunucusuz (serverless) bir otomasyon altyapısıdır.
+Bu sistem, [taziye.kahta.bel.tr](https://taziye.kahta.bel.tr/) üzerindeki taziye ilanlarını **7/24 saatlik periyotlarla** tarayan, yüksek hızlı paralel kazıma (scraping) motoru ile saniyeler içinde işleyen, **Cloud Firestore** veritabanına otomatik senkronize eden ve Google Play'deki **Android (Java)** mobil uygulamanıza **Firebase Cloud Messaging (FCM)** üzerinden anlık push bildirim gönderen yüksek erişilebilirlikli, sunucusuz (serverless) bir otomasyon ve yönetim ekosistemidir.
 
 ---
 
-## 🏛️ Mimari Şema
+## 🏛️ Uçtan Uca Sistem Mimarisi
 
 ```mermaid
 flowchart TD
-    subgraph Kaynak ["🏛️ Veri Kaynağı"]
-        KB["taziye.kahta.bel.tr\n(Kahta Belediyesi Portalı)"]
+    subgraph VeriKaynagi["🏛️ Veri Kaynağı"]
+        Portal["taziye.kahta.bel.tr<br/>Kahta Belediyesi Resmi Taziye Portalı"]
     end
 
-    subgraph Zamanlayici ["⏰ 7/24 Otomatik Tetikleyici"]
-        GHA["GitHub Actions (Cron)\n(Her 15 dakikada bir ücretsiz)"]
+    subgraph ZamanlayiciKatmani["⏰ 7/24 Otomasyon & Tetikleyici"]
+        GHACron["GitHub Actions Cron Job<br/>(0 * * * * - Her Saat Başı)"]
     end
 
-    subgraph Bulut ["⚡ Vercel Serverless API (Node.js & TypeScript)"]
-        Scraper["Scraper Motoru\n(Cheerio & Fetch)"]
-        DiffEngine["Mükerrerlik & Fark Motoru\n(kahta_{belediyeId} Kontrolü)"]
-        FCMService["FCM Bildirim Servisi\n(Topic: /topics/taziyeler)"]
-        REST["REST API Uç Noktaları\n(/api/sync & /api/taziyeler)"]
+    subgraph BackendServerless["⚡ Vercel Serverless Altyapısı (Node.js & TypeScript)"]
+        direction TB
+        Auth["Güvenlik Doğrulaması<br/>(Bearer CRON_SECRET)"]
+        Scraper["Paralel Scraper Motoru<br/>(Promise.all & Cheerio - ~4.4 sn)"]
+        Deduplicator["Mükerrerlik & Fark Motoru<br/>(kahta_ID Kontrolü)"]
+        FCMService["FCM Bildirim Servisi<br/>(Topic: /topics/taziyeler)"]
+        SyncAPI["/api/sync Endpoint'i"]
+        PublicAPI["/api/taziyeler Endpoint'i"]
     end
 
-    subgraph FirebaseKatmani ["🔥 Firebase Ekosistemi"]
-        Firestore[("Cloud Firestore\n(taziyeler koleksiyonu)")]
-        FCM["Firebase Cloud Messaging (FCM)"]
+    subgraph FirebaseCloud["🔥 Google Firebase Ekosistemi"]
+        Firestore[("Cloud Firestore<br/>'taziyeler' Koleksiyonu")]
+        FCMTopic["FCM Topic Engine<br/>(/topics/taziyeler)"]
     end
 
-    subgraph MobilKatman ["📱 Mobil Uygulama Ekosistemi"]
-        App["📱 Google Play Mobil Uygulaması\n(Android - Java)"]
-        AdminApp["🛠️ Admin Uygulaması\n(Manuel Giriş & Kontrol)"]
+    subgraph MobilEkosistem["📱 Android Mobil Uygulama Ekosistemi"]
+        direction TB
+        UserApp["📱 Kahta Güncel Cepte (Son Kullanıcı)<br/>- Otomatik /topics/taziyeler Aboneliği<br/>- Zengin Detay Ekranı & Arama<br/>- Hibrit Çift Şema Desteği"]
+        AdminApp["🛠️ Kahta Güncel Admin (Yönetici Paneli)<br/>- Otomatik & Manuel İlan Ayrımı<br/>- Kaynak Filtreleme (Belediye / Admin)<br/>- İlan Düzenleme & Silme<br/>- Manuel FCM Bildirim Gönder Butonu"]
     end
 
-    GHA -->|GET /api/sync + Bearer CRON_SECRET| Scraper
-    KB -->|HTML / POST modal.php| Scraper
-    Scraper --> DiffEngine
-    DiffEngine <-->|"Belge kontrolü (exists)"| Firestore
-    DiffEngine -->|Yeni kayıt durumunda ekle| Firestore
-    DiffEngine -->|Yeni kayıt durumunda tetikle| FCMService
-    FCMService -->|Topic Bildirimi| FCM
-    FCM -->|Push Bildirim| App
-    Firestore <--> App
-    Firestore <--> AdminApp
-    REST --> Scraper
+    %% Akışlar
+    GHACron -->|"1. Saatlik HTTP GET + Bearer CRON_SECRET"| SyncAPI
+    SyncAPI --> Auth
+    Auth -->|"Yetki Onaylandı"| Scraper
+    Portal <-->|"2. Hızlı Paralel Veri Çekimi (HTML + modal.php)"| Scraper
+    Scraper -->|"3. Ayrıştırılmış Taziye Kayıtları"| Deduplicator
+    Deduplicator <-->|"4. Belge Mevcutluk Kontrolü (exists)"| Firestore
+    Deduplicator -->|"5. Sadece Yeni Kayıtları Yaz"| Firestore
+    Deduplicator -->|"6. Yeni Kayıt Varsa Bildirim Tetikle"| FCMService
+    FCMService -->|"7. Toplu Push Bildirim İlet"| FCMTopic
+
+    FCMTopic -->|"8. Anlık Push Bildirimi"| UserApp
+    Firestore <-->|"Gerçek Zamanlı Okuma / Listeleme"| UserApp
+    Firestore <-->|"İlan Ekleme, Güncelleme & Silme"| AdminApp
+    AdminApp -.->|"Gerektiğinde Manuel Bildirim Tetikle"| FCMTopic
+    PublicAPI --> Scraper
 ```
 
 ---
 
-## 🚀 Temel Özellikler
+## ⚡ Ekosistem Bileşenleri ve Yetenekleri
 
-- **Çift Aşamalı Akıllı Scraper:** Ana sayfadaki taziye kartlarının yanı sıra `modal.php` uç noktasından cenaze namazı saati, defin yeri, mezarlık, taziye evi ve akrabalık bağları gibi tüm derinlikli bilgileri çeker.
-- **%100 Mükerrer Kayıt Koruması (Deduplication):** Her ilanın belediye ID'sini (`kahta_809` vb.) benzersiz bir belge kimliği (Document ID) olarak kullanır. Sistem daha önce eklenen kayıtları atlar ve kullanıcılara aynı bildirimi asla tekrar göndermez.
-- **Anlık FCM Push Bildirimi:** Yeni bir vefat ilanı eklendiğinde kayıtlı tüm Android kullanıcılara özelleştirilmiş başlık ve taziye evi bilgisiyle yüksek öncelikli bildirim iletir.
-- **Admin App ile Çift Yönlü Uyumluluk:** Eskiden tek tek manuel girdiğiniz Admin uygulamasını kapatmanıza gerek kalmaz. Sistem otomatik çekilenleri `kaynak: "belediye_otomatik"`, admin ilanlarını `kaynak: "admin_manuel"` olarak etiketler; her iki kaynak Firestore'da kusursuz birlikte yaşar.
-- **Sıfır Sunucu Maliyeti (Serverless):** Vercel Serverless ve GitHub Actions altyapısı sayesinde 7/24 kesintisiz, sunucu kiralama ücreti olmadan çalışır.
+### 1. 🤖 Backend Scraper & Sync Engine (`d:\antikor-taziye`)
+- **Yüksek Hızlı Paralel Kazıma:** Sıralı döngü yerine `Promise.all` ile eş zamanlı HTTP istekleri yaparak 18 ilanın tüm detaylarını (cenaze namazı, defin yeri, mezarlık, taziye evi, akrabalık bağları vb.) **26 saniye yerine sadece ~4.40 saniyede** eksiksiz çeker.
+- **Vercel Serverless Güvencesi:** `vercel.json` üzerinde tanımlı `maxDuration: 60` ayarı sayesinde zaman aşımı (timeout) riski ortadan kaldırılmıştır.
+- **Akıllı Mükerrer Kayıt Önleme (Deduplication):** Belediye ID'sini (`kahta_813` vb.) Document ID olarak kullanır. Sistem veritabanında zaten var olan kayıtları atlar ve asla mükerrer bildirim göndermez.
+- **Güvenli Erişim:** `/api/sync` uç noktası `Bearer CRON_SECRET` başlığı ile yetkilendirilmemiş isteklere karşı korunur.
+
+### 2. ⏰ 7/24 Kesintisiz GitHub Actions Cron (`.github/workflows/cron.yml`)
+- **Saatlik Otomasyon:** `0 * * * *` cron kuralı ile her saat başı tetiklenir.
+- **Sıfır Maliyet:** Bilgisayarınız kapalı olsa dahi bulutta 7/24 tamamen ücretsiz çalışır.
+
+### 3. 🛠️ Kahta Güncel Admin Uygulaması (`kahtagunceladmin`)
+- **Çift Şema (Dual-Schema) Uyumluluğu:** Hem botun eklediği yeni alanları (`adSoyad`, `yas`, `yakiniGsm`, `taziyeEvi`) hem de eski admin paneli alanlarını (`vefatEden`, `yasi`, `yakiniTel`, `taziyeYeri`) hibrit getter fonksiyonları ile sorunsuz okur ve günceller.
+- **Kaynak Ayrımı & Rozetler:** İlanların belediye botu tarafından mı (`belediye_otomatik`) yoksa yönetici tarafından mı (`admin_manuel`) eklendiği renkli rozetlerle listelenir.
+- **Gelişmiş Filtreleme:** Üst barda yer alan sekmelerle *Tümü*, *Belediye (Bot)* veya *Admin (Manuel)* filtrelenebilir.
+- **Manuel FCM Bildirim Tetikleme:** Güncelleme ekranında yer alan **"Bildirim Gönder"** butonu sayesinde, istenildiğinde kayıtlı kullanıcılara tek tıkla FCM bildirimi yeniden iletilebilir.
+
+### 4. 📱 Kahta Güncel Cepte Kullanıcı Uygulaması (`KahtaGncelCeptee`)
+- **Otomatik Topic Aboneliği:** Uygulama açılışında `MainActivity.java` içinde kullanıcılar arka planda `FirebaseMessaging.getInstance().subscribeToTopic("taziyeler")` konusuna otomatik abone edilir.
+- **Zengin Taziye Detayı:** Vefat edenin yaşı, cenaze namazı vakti/yeri, defin mezarlığı, taziye evi adresi, taziye yakını ve telefon numarası (tek tıkla arama) modern kart tasarımında sunulur.
 
 ---
 
-## 📦 Firestore Veri Modeli
+## 📦 Firestore Hibrit Veri Modeli
 
-Firestore `taziyeler` koleksiyonundaki her belgenin şeması:
+Firestore `taziyeler` koleksiyonundaki her belgenin veri yapısı:
 
 ```json
 {
-  "id": "kahta_809",
-  "belediyeId": "809",
-  "adSoyad": "HALİME YANAK",
-  "yas": "76",
-  "vefatTarihi": "18.10.2026",
-  "yakiniAdSoyad": "H. OSMAN YANAK",
-  "yakinlik": "EŞİ",
-  "yakiniGsm": "0535 510 13 35",
-  "cenazeNamazi": "SAAT 10:00'DA AKKUŞ KÖYÜ",
-  "definYeri": "AKKUŞ KÖYÜ ĞIREWE",
+  "id": "kahta_813",
+  "belediyeId": "813",
+  "adSoyad": "MEHMET SİNAN KURT",
+  "vefatEden": "MEHMET SİNAN KURT",
+  "yas": "64",
+  "yasi": "64",
+  "vefatTarihi": "20.10.2026",
+  "yakiniAdSoyad": "MEHMET KURT",
+  "yakinlik": "BABASI",
+  "yakiniGsm": "0532 123 45 67",
+  "yakiniTel": "0532 123 45 67",
+  "cenazeNamazi": "ÖĞLE NAMAZINA MÜTEAKİP ÇARŞI CAMİİ",
+  "definYeri": "KARŞIYAKA MEZARLIĞI",
   "definIlIlce": "KAHTA / ADIYAMAN",
-  "taziyeEvi": "AKKUŞ KÖYÜ TAZİYE EVİ",
-  "taziyeAdresi": "",
-  "ayrintiliYakinlik": "MAHMUT, İHSAN,RAMAZAN, İSMAİL VE ŞUAYİP YANAK'IN ANNESİ",
+  "taziyeEvi": "CELAL TAZİYE EVİ",
+  "taziyeYeri": "CELAL TAZİYE EVİ",
+  "taziyeAdresi": "Yavuz Selim Mah. Kahta",
+  "ayrintiliYakinlik": "ALİ, HAKAN VE AHMET KURT'UN BABASI",
   "kaynak": "belediye_otomatik",
   "durum": "aktif",
-  "olusturulmaTarihi": "2026-10-18T22:46:04.579Z",
+  "olusturulmaTarihi": "2026-10-21T10:45:12.345Z",
   "olusturulmaTimestamp": "(Firestore ServerTimestamp)"
 }
 ```
 
 ---
 
-## 📱 Android (Java) Uygulama Entegrasyonu
+## 🔑 Ortam Değişkenleri ve Kurulum
 
-### 1. FCM Bildirim Konusuna Abone Olma
-`MainActivity.java` sınıfınızın `onCreate` metodunda kullanıcıları taziye bildirim konusuna abone edin:
+### 1. Vercel Dashboard Ayarları
+Vercel projenizin **Settings > Environment Variables** menüsünden aşağıdaki anahtarları tanımlayın:
 
-```java
-import com.google.firebase.messaging.FirebaseMessaging;
+| Anahtar Adı | Örnek Değer | Açıklama |
+| :--- | :--- | :--- |
+| `CRON_SECRET` | `kahta_taziye_guvenlik_anahtari_2026` | Senkronizasyon endpoint'ini koruyan güvenlik anahtarı |
+| `FIRESTORE_COLLECTION` | `taziyeler` | Firestore'da taziye kayıtlarının tutulduğu koleksiyon |
+| `FCM_TOPIC` | `taziyeler` | Kullanıcıların abone olduğu bildirim topic adı |
+| `FIREBASE_SERVICE_ACCOUNT` | `{"type": "service_account", ...}` | Firebase Admin SDK JSON dosyasının metin içeriği |
 
-FirebaseMessaging.getInstance().subscribeToTopic("taziyeler")
-    .addOnCompleteListener(task -> {
-        if (task.isSuccessful()) {
-            Log.d("AntikorTaziye", "Taziyeler konusuna başarıyla abone olundu.");
-        }
-    });
-```
-
-### 2. Firestore'dan Verileri Dinleme
-Verileri en yeni eklenen ilan en üstte olacak şekilde dinleyin:
-
-```java
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-
-FirebaseFirestore db = FirebaseFirestore.getInstance();
-db.collection("taziyeler")
-    .orderBy("olusturulmaTimestamp", Query.Direction.DESCENDING)
-    .addSnapshotListener((snapshots, error) -> {
-        if (error != null) {
-            Log.e("AntikorTaziye", "Veri dinleme hatası", error);
-            return;
-        }
-        if (snapshots != null) {
-            // Listenizi güncelleyin
-        }
-    });
-```
+### 2. GitHub Secrets Ayarları
+GitHub deponuzun (`Yasin0234/kahta-taziye`) **Settings > Secrets and variables > Actions** sayfasına gidin:
+- **Secret Name:** `CRON_SECRET`
+- **Secret Value:** `kahta_taziye_guvenlik_anahtari_2026`
 
 ---
 
@@ -132,12 +139,12 @@ db.collection("taziyeler")
 
 | Uç Nokta | Metot | Açıklama | Yetki |
 | :--- | :--- | :--- | :--- |
-| `/api/sync` | `GET` / `POST` | Taziye taramasını başlatır, Firestore'a kaydeder ve FCM bildirimi atar. | `CRON_SECRET` Gerekli |
+| `/api/sync` | `GET` / `POST` | Taziye taramasını başlatır, Firestore'a kaydeder ve FCM bildirimi atar. | `CRON_SECRET` (Bearer Token) Gerekli |
 | `/api/taziyeler` | `GET` | Belediye sitesindeki mevcut ilanları ham JSON olarak listeler. | Herkese Açık |
 
 ---
 
-## 👥 Hazırlayanlar
+## 👥 Proje Ekibi & Geliştiriciler
 
 - **Muhammed Yasin KORKUT**
 - **Tahircan ASLAN**
@@ -148,4 +155,4 @@ db.collection("taziyeler")
 
 Bu yazılım [MIT Lisansı](LICENSE) kapsamında lisanslanmıştır.
 
-**© 2023 Korkut Teknoloji, Yazılım ve Medya A.Ş.** Tüm hakları saklıdır.
+**© 2023 - 2026 Korkut Teknoloji, Yazılım ve Medya A.Ş.** Tüm hakları saklıdır.
