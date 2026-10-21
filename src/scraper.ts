@@ -16,7 +16,7 @@ function cleanText(text: string | null | undefined): string {
 }
 
 /**
- * Kahta Belediyesi Taziye Portalından ilanları ve detaylarını çeker.
+ * Kahta Belediyesi Taziye Portalından ilanları ve detaylarını paralel/hızlı çeker.
  */
 export async function scrapeTaziyeler(): Promise<TaziyeDetail[]> {
   try {
@@ -36,24 +36,27 @@ export async function scrapeTaziyeler(): Promise<TaziyeDetail[]> {
     const $ = cheerio.load(html);
 
     const cards = $('.card[data-id]');
-    const taziyeList: TaziyeDetail[] = [];
+    const ids: string[] = [];
 
-    for (let i = 0; i < cards.length; i++) {
-      const card = $(cards[i]);
-      const id = card.attr('data-id')?.trim();
+    cards.each((_, el) => {
+      const id = $(el).attr('data-id')?.trim();
+      if (id && !ids.includes(id)) {
+        ids.push(id);
+      }
+    });
 
-      if (!id) continue;
-
-      // Modal detayını çek
+    // Paralel olarak tüm ilan detaylarını çek (Hızlı & Timeout korumalı)
+    const detailPromises = ids.map(async (id) => {
       try {
-        const detail = await fetchTaziyeDetail(id);
-        if (detail) {
-          taziyeList.push(detail);
-        }
+        return await fetchTaziyeDetail(id);
       } catch (err) {
         console.error(`Taziye ID ${id} detay çekme hatası:`, err);
+        return null;
       }
-    }
+    });
+
+    const results = await Promise.all(detailPromises);
+    const taziyeList: TaziyeDetail[] = results.filter((item): item is TaziyeDetail => item !== null);
 
     return taziyeList;
   } catch (error) {
