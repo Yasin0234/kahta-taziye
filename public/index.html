@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Antikor 8.0 - Kahta Taziye Otomasyon Sistemi</title>
-  <meta name="description" content="Kahta Belediyesi taziye ilanları 7/24 otomatik senkronizasyon, Firestore veritabanı entegrasyonu ve FCM push bildirim altyapısı.">
+  <title>Antikor 8.0 - Adıyaman & İlçeleri Taziye Otomasyon Sistemi</title>
+  <meta name="description" content="Kahta, Besni ve Adıyaman Merkez taziye ilanları otomatik senkronizasyon, Firestore veritabanı entegrasyonu ve ilçeye özel FCM push bildirim altyapısı.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕊️</text></svg>">
   
   <!-- Google Fonts & Tailwind CSS CDN -->
@@ -46,9 +46,9 @@
     }
     .hero-glow {
       position: absolute;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(37,99,235,0.18) 0%, rgba(15,23,42,0) 70%);
+      width: 650px;
+      height: 650px;
+      background: radial-gradient(circle, rgba(37,99,235,0.2) 0%, rgba(15,23,42,0) 70%);
       top: -150px;
       left: 50%;
       transform: translateX(-50%);
@@ -88,9 +88,9 @@
         <div>
           <div class="flex items-center gap-2">
             <span class="font-extrabold text-lg tracking-tight text-white">Antikor 8.0</span>
-            <span class="text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">Enterprise</span>
+            <span class="text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">Çoklu İlçe Altyapısı</span>
           </div>
-          <p class="text-xs text-slate-400 hidden sm:block">Kahta Taziye Otomasyon & Bildirim Altyapısı</p>
+          <p class="text-xs text-slate-400 hidden sm:block">Adıyaman Güncel • Kahta • Besni • Merkez Taziye & Bildirim Otomasyonu</p>
         </div>
       </div>
 
@@ -101,10 +101,9 @@
           <span>Sistem Çevrimiçi</span>
         </div>
 
-        <a href="https://github.com/Yasin0234/kahta-taziye" target="_blank" rel="noopener noreferrer" 
-           class="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium text-slate-300 hover:text-white px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 transition">
-          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-          <span>GitHub</span>
+        <a href="#admin-paneli" 
+           class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-400 hover:text-white px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/30 hover:bg-blue-600 transition">
+          <span>⚙️ Admin Kontrol</span>
         </a>
       </div>
     </div>
@@ -116,15 +115,16 @@
     <!-- Hero Section -->
     <div class="text-center max-w-3xl mx-auto space-y-6">
       <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
-        <span>⚡ Serverless Cloud Automation Altyapısı</span>
+        <span>⚡ Çoklu İlçe & Bağımsız FCM Bildirim Motoru</span>
       </div>
       
-      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight sm:leading-none">
-        Antikor 8.0 <br class="hidden sm:inline"/><span class="bg-gradient-to-r from-blue-400 via-indigo-300 to-sky-400 bg-clip-text text-transparent">Kahta Taziye Sistemi</span>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+        Adıyaman Taziye ve Vefat <br class="hidden sm:inline"/>
+        <span class="bg-gradient-to-r from-blue-400 via-indigo-300 to-sky-400 bg-clip-text text-transparent">Merkezi Yönetim Sistemi</span>
       </h1>
       
       <p class="text-slate-300 sm:text-lg leading-relaxed font-normal">
-        Kahta Belediyesi taziye ilanlarını 7/24 periyodik olarak tarayan, <strong class="text-white font-semibold">Cloud Firestore</strong> veritabanına otomatik senkronize eden ve mobil uygulamalara <strong class="text-white font-semibold">Firebase Cloud Messaging (FCM)</strong> üzerinden anlık push bildirim gönderen yüksek erişilebilirlikli otomasyon altyapısıdır.
+        <strong class="text-white">Kahta</strong>, <strong class="text-white">Besni</strong> ve <strong class="text-white">Adıyaman Merkez</strong> belediyelerinden taziye ilanlarını otomatik tarayan, her ilçeyi bağımsız <strong class="text-white font-semibold">FCM kanallarıyla</strong> kendi mobil uygulamalarına ileten ve <strong class="text-white font-semibold">Adıyaman Güncel Admin</strong> üzerinden tek merkezden yönetilebilen kurumsal altyapı.
       </p>
 
       <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
@@ -132,35 +132,74 @@
           <span>📋 Canlı İlanları İncele</span>
         </a>
         <a href="/api/taziyeler" target="_blank" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm transition flex items-center gap-2">
-          <span>🔌 Ham JSON API</span>
+          <span>🔌 Tüm İlçeler API</span>
         </a>
-        <a href="https://taziye.kahta.bel.tr" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 font-semibold text-sm transition flex items-center gap-2">
-          <span>🏛️ Belediye Portalı</span>
+        <a href="/api/list" target="_blank" class="px-5 py-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 font-semibold text-sm transition flex items-center gap-2">
+          <span>🗄️ Firestore Arşiv API</span>
         </a>
       </div>
     </div>
 
-    <!-- Feature Metrics Grid -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-      <div class="glass-card p-5 rounded-2xl">
-        <div class="text-2xl mb-1">⏱️</div>
-        <div class="text-2xl font-bold text-white">15 Dk</div>
-        <div class="text-xs text-slate-400 font-medium mt-1">Periyodik Otomatik Tarama (GitHub Actions Cron)</div>
+    <!-- İlçe Portalları Kartları -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Kahta -->
+      <div class="glass-card p-6 rounded-2xl space-y-3 border-t-4 border-t-blue-500 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-blue-400">İlçe Portalı</span>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono">Topic: taziyeler_kahta</span>
+          </div>
+          <h3 class="text-xl font-bold text-white flex items-center gap-2">
+            <span>📍 Kahta Belediyesi</span>
+          </h3>
+          <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+            Kahta Belediyesi taziye portalından anlık taranır. Gelecekte <strong>Kahta Güncel Cepte</strong> uygulamasına özel bildirim iletir.
+          </p>
+        </div>
+        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+          <a href="https://taziye.kahta.bel.tr" target="_blank" class="text-xs text-blue-400 hover:underline">Resmi Portal ↗</a>
+          <button onclick="triggerSync('kahta')" class="text-xs px-3 py-1 rounded-lg bg-blue-600/20 hover:bg-blue-600 text-blue-300 hover:text-white transition font-medium">Senkronize Et</button>
+        </div>
       </div>
-      <div class="glass-card p-5 rounded-2xl">
-        <div class="text-2xl mb-1">🛡️</div>
-        <div class="text-2xl font-bold text-white">%100</div>
-        <div class="text-xs text-slate-400 font-medium mt-1">Mükerrer Kayıt Koruması (Deduplication Engine)</div>
+
+      <!-- Besni -->
+      <div class="glass-card p-6 rounded-2xl space-y-3 border-t-4 border-t-emerald-500 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">İlçe Portalı</span>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">Topic: taziyeler_besni</span>
+          </div>
+          <h3 class="text-xl font-bold text-white flex items-center gap-2">
+            <span>📍 Besni Belediyesi</span>
+          </h3>
+          <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+            Besni Belediyesi Vefat Edenler sayfasından taranır. Gelecekte <strong>Besni Güncel Cepte</strong> uygulamasına bağımsız bildirim fırlatır.
+          </p>
+        </div>
+        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+          <a href="https://besni.bel.tr/sayfa/VefatEdenler" target="_blank" class="text-xs text-emerald-400 hover:underline">Resmi Portal ↗</a>
+          <button onclick="triggerSync('besni')" class="text-xs px-3 py-1 rounded-lg bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white transition font-medium">Senkronize Et</button>
+        </div>
       </div>
-      <div class="glass-card p-5 rounded-2xl">
-        <div class="text-2xl mb-1">📲</div>
-        <div class="text-2xl font-bold text-white">Anlık FCM</div>
-        <div class="text-xs text-slate-400 font-medium mt-1">Android Cihazlara Yüksek Öncelikli Push Bildirim</div>
-      </div>
-      <div class="glass-card p-5 rounded-2xl">
-        <div class="text-2xl mb-1">☁️</div>
-        <div class="text-2xl font-bold text-white">0 TL</div>
-        <div class="text-xs text-slate-400 font-medium mt-1">Tamamen Sunucusuz (Vercel Serverless Architecture)</div>
+
+      <!-- Adıyaman Merkez -->
+      <div class="glass-card p-6 rounded-2xl space-y-3 border-t-4 border-t-purple-500 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-purple-400">İl Merkezi</span>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 font-mono">Topic: taziyeler_merkez</span>
+          </div>
+          <h3 class="text-xl font-bold text-white flex items-center gap-2">
+            <span>📍 Adıyaman Merkez</span>
+          </h3>
+          <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+            Adıyaman Belediyesi Taziye İlanları ve detay modalından taranır. <strong>Adıyaman Güncel Cepte</strong> uygulamasına özel bildirim iletir.
+          </p>
+        </div>
+        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+          <a href="https://adiyaman.bel.tr/TAZIYE-ILANLARI" target="_blank" class="text-xs text-purple-400 hover:underline">Resmi Portal ↗</a>
+          <button onclick="triggerSync('merkez')" class="text-xs px-3 py-1 rounded-lg bg-purple-600/20 hover:bg-purple-600 text-purple-300 hover:text-white transition font-medium">Senkronize Et</button>
+        </div>
       </div>
     </div>
 
@@ -172,15 +211,25 @@
             <h2 class="text-2xl font-bold text-white tracking-tight">Canlı Taziye İlanları</h2>
             <span id="ilan-sayisi-badge" class="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 text-xs font-semibold">Yükleniyor...</span>
           </div>
-          <p class="text-xs sm:text-sm text-slate-400 mt-1">Belediye sisteminden anlık çekilen güncel taziye kayıtları</p>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">İlçelere göre filtrelenebilir anlık belediye kayıtları</p>
         </div>
 
-        <div class="flex items-center gap-2">
-          <input type="text" id="arama-input" placeholder="İsim veya taziye evi ara..." 
-                 class="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition w-full sm:w-64">
-          <button id="yenile-btn" title="Yenile" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-          </button>
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- İlçe Filtre Butonları -->
+          <div class="inline-flex rounded-xl bg-slate-900 p-1 border border-slate-800" id="ilce-tabs">
+            <button onclick="setDistrictFilter('tumu')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-blue-600 text-white" data-district="tumu">Tümü (İl Geneli)</button>
+            <button onclick="setDistrictFilter('kahta')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition" data-district="kahta">Kahta</button>
+            <button onclick="setDistrictFilter('besni')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition" data-district="besni">Besni</button>
+            <button onclick="setDistrictFilter('merkez')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition" data-district="merkez">Merkez</button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <input type="text" id="arama-input" placeholder="İsim, ilçe veya taziye evi ara..." 
+                   class="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition w-48 sm:w-60">
+            <button id="yenile-btn" title="Yenile" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -205,63 +254,154 @@
       </div>
     </section>
 
-    <!-- Architecture & Features Details (From README) -->
-    <section class="space-y-8">
-      <div class="text-center max-w-2xl mx-auto space-y-2">
-        <h2 class="text-2xl sm:text-3xl font-bold text-white">Sistem Mimarisi & Entegrasyon</h2>
-        <p class="text-sm text-slate-400">Uçtan uca sunucusuz otomasyon döngüsü nasıl çalışır?</p>
+    <!-- Adıyaman Güncel Admin Kontrol Paneli -->
+    <section id="admin-paneli" class="space-y-6 pt-6">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div>
+          <h2 class="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+            <span>⚙️ Adıyaman Güncel Admin Merkezi</span>
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">Tüm Adıyaman ilçelerinin taziye akışını ve bildirimlerini buradan yönetin</p>
+        </div>
+        <button onclick="triggerSync('all')" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-lg shadow-blue-600/30 transition flex items-center gap-2">
+          <span>🔄 Tüm İlçeleri Şimdi Eşitle</span>
+        </button>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Adım 1 -->
-        <div class="glass-card p-6 rounded-2xl space-y-3 border-l-4 border-l-blue-500">
-          <div class="text-xs font-bold uppercase tracking-wider text-blue-400">Adım 01 • Veri Madenciliği</div>
-          <h3 class="text-lg font-bold text-white">Çift Aşamalı Scraper</h3>
-          <p class="text-sm text-slate-400 leading-relaxed">
-            Kahta Belediyesi portalından ana kartların yanı sıra <code class="text-xs px-1.5 py-0.5 rounded bg-slate-800 text-blue-300">modal.php</code> üzerinden cenaze namazı, defin yeri ve taziye evi detaylarını eksiksiz çıkarır.
-          </p>
-        </div>
-
-        <!-- Adım 2 -->
-        <div class="glass-card p-6 rounded-2xl space-y-3 border-l-4 border-l-indigo-500">
-          <div class="text-xs font-bold uppercase tracking-wider text-indigo-400">Adım 02 • Mükerrerlik Denetimi</div>
-          <h3 class="text-lg font-bold text-white">Firestore Senkronizasyon</h3>
-          <p class="text-sm text-slate-400 leading-relaxed">
-            Her ilanın belediye ID'sini (<code class="text-xs px-1.5 py-0.5 rounded bg-slate-800 text-indigo-300">kahta_{id}</code>) eşsiz kimlik yapar. Sadece yeni eklenen ilanları Firestore <code class="text-xs px-1.5 py-0.5 rounded bg-slate-800 text-indigo-300">taziyeler</code> koleksiyonuna kaydeder.
-          </p>
-        </div>
-
-        <!-- Adım 3 -->
-        <div class="glass-card p-6 rounded-2xl space-y-3 border-l-4 border-l-emerald-500">
-          <div class="text-xs font-bold uppercase tracking-wider text-emerald-400">Adım 03 • Mobil İletim</div>
-          <h3 class="text-lg font-bold text-white">FCM Push Bildirim</h3>
-          <p class="text-sm text-slate-400 leading-relaxed">
-            Firebase Cloud Messaging üzerinden Android mobil uygulamasına <code class="text-xs px-1.5 py-0.5 rounded bg-slate-800 text-emerald-300">/topics/taziyeler</code> kanalıyla anında yüksek öncelikli bildirim yollar.
-          </p>
-        </div>
-      </div>
-
-      <!-- Developer API Card -->
-      <div class="glass-card p-6 sm:p-8 rounded-2xl space-y-4">
-        <h3 class="text-lg font-bold text-white flex items-center gap-2">
-          <span>🛠️ API & Uç Noktalar</span>
-        </h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
-            <div class="flex items-center justify-between mb-2">
-              <span class="font-mono text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">GET</span>
-              <span class="text-xs text-slate-500">Herkese Açık</span>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Manuel Taziye Ekleme Formu -->
+        <div class="glass-card p-6 rounded-2xl space-y-4 lg:col-span-1">
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <span>✍️ Manuel Taziye & Bildirim Girişi</span>
+          </h3>
+          <p class="text-xs text-slate-400">Belediye sistemine düşmeyen veya özel ilanları admin olarak ekleyin ve anında ilgili ilçeye bildirim gönderin.</p>
+          
+          <form id="admin-add-form" class="space-y-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">İlçe Seçimi</label>
+              <select id="form-ilce" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm text-white focus:outline-none focus:border-blue-500">
+                <option value="kahta">Kahta (taziyeler_kahta)</option>
+                <option value="besni">Besni (taziyeler_besni)</option>
+                <option value="merkez">Adıyaman Merkez (taziyeler_merkez)</option>
+              </select>
             </div>
-            <div class="font-mono text-sm text-blue-400 font-semibold mb-1">/api/taziyeler</div>
-            <p class="text-xs text-slate-400">Belediye sistemindeki aktif taziye ilanlarını ham JSON formatında listeler.</p>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Vefat Eden Adı Soyadı *</label>
+              <input type="text" id="form-adSoyad" required placeholder="Örn: Ahmet YILMAZ" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm text-white focus:outline-none focus:border-blue-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Yaş</label>
+                <input type="text" id="form-yas" placeholder="Örn: 72" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm text-white focus:outline-none focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Tarih</label>
+                <input type="text" id="form-vefatTarihi" placeholder="Bugün" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm text-white focus:outline-none focus:border-blue-500">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Taziye Evi / Yeri</label>
+              <input type="text" id="form-taziyeEvi" placeholder="Örn: Latif Doğan Taziye Evi" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm text-white focus:outline-none focus:border-blue-500">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Defin Yeri</label>
+              <input type="text" id="form-definYeri" placeholder="Örn: Belediye Mezarlığı" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm text-white focus:outline-none focus:border-blue-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Yakını</label>
+                <input type="text" id="form-yakiniAdSoyad" placeholder="Örn: Mehmet Yılmaz (Oğlu)" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm text-white focus:outline-none focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">İletişim Tel</label>
+                <input type="text" id="form-yakiniGsm" placeholder="0532 ..." class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm text-white focus:outline-none focus:border-blue-500">
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 pt-1">
+              <input type="checkbox" id="form-bildirimGonder" checked class="w-4 h-4 rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0">
+              <label for="form-bildirimGonder" class="text-xs text-slate-300">İlçenin cep telefonlarına anında push bildirimi gönder</label>
+            </div>
+
+            <button type="submit" id="form-submit-btn" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm transition mt-2">
+              🚀 Firestore'a Ekle & Bildirim Gönder
+            </button>
+            <div id="form-status" class="text-xs text-center hidden"></div>
+          </form>
+        </div>
+
+        <!-- Bildirim & Senkronizasyon Durum Kartları -->
+        <div class="glass-card p-6 rounded-2xl space-y-4 lg:col-span-2">
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <span>📢 Bildirim Kanalları & Gelecek Uygulama Matrisi</span>
+          </h3>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="border-b border-slate-800 text-slate-400 font-semibold uppercase">
+                <tr>
+                  <th class="pb-2">İlçe / Kapsam</th>
+                  <th class="pb-2">Hedef Mobil Uygulama</th>
+                  <th class="pb-2">FCM Topic</th>
+                  <th class="pb-2">Bildirim Başlığı</th>
+                  <th class="pb-2 text-right">İşlem</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                <tr>
+                  <td class="py-3 font-semibold text-white">Kahta</td>
+                  <td class="py-3 text-blue-400">Kahta Güncel Cepte</td>
+                  <td class="py-3 font-mono text-slate-400">taziyeler_kahta</td>
+                  <td class="py-3">🕊️ [Kahta] Vefat ve Taziye</td>
+                  <td class="py-3 text-right">
+                    <button onclick="triggerSync('kahta')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-blue-600 text-slate-200 hover:text-white transition">Tara</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="py-3 font-semibold text-white">Besni</td>
+                  <td class="py-3 text-emerald-400">Besni Güncel Cepte</td>
+                  <td class="py-3 font-mono text-slate-400">taziyeler_besni</td>
+                  <td class="py-3">🕊️ [Besni] Vefat ve Taziye</td>
+                  <td class="py-3 text-right">
+                    <button onclick="triggerSync('besni')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-emerald-600 text-slate-200 hover:text-white transition">Tara</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="py-3 font-semibold text-white">Adıyaman Merkez</td>
+                  <td class="py-3 text-purple-400">Adıyaman Güncel Cepte</td>
+                  <td class="py-3 font-mono text-slate-400">taziyeler_merkez</td>
+                  <td class="py-3">🕊️ [Merkez] Vefat ve Taziye</td>
+                  <td class="py-3 text-right">
+                    <button onclick="triggerSync('merkez')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-purple-600 text-slate-200 hover:text-white transition">Tara</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="py-3 font-semibold text-white">Tüm İl (Genel)</td>
+                  <td class="py-3 text-amber-400">Adıyaman Güncel Admin & İl Portalı</td>
+                  <td class="py-3 font-mono text-slate-400">taziyeler_all</td>
+                  <td class="py-3">🕊️ [İlçe] Vefat ve Taziye</td>
+                  <td class="py-3 text-right">
+                    <button onclick="triggerSync('all')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-amber-600 text-slate-200 hover:text-white transition">Tümünü Tara</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+
+          <!-- Canlı Senkronizasyon Konsolu Log Çıktısı -->
+          <div class="mt-4 pt-4 border-t border-slate-800">
             <div class="flex items-center justify-between mb-2">
-              <span class="font-mono text-xs px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 font-bold">GET / POST</span>
-              <span class="text-xs text-amber-400 font-medium">CRON_SECRET Yetkili</span>
+              <span class="text-xs font-semibold text-slate-300">Senkronizasyon Durum Çıktısı:</span>
+              <span id="sync-timer" class="text-[11px] text-slate-500 font-mono">Hazır</span>
             </div>
-            <div class="font-mono text-sm text-blue-400 font-semibold mb-1">/api/sync</div>
-            <p class="text-xs text-slate-400">Otomasyon taramasını başlatır, Firestore'a senkronize eder ve FCM push bildirimi fırlatır.</p>
+            <div id="sync-console" class="p-3 rounded-xl bg-slate-950 font-mono text-xs text-slate-400 min-h-24 max-h-48 overflow-y-auto space-y-1 border border-slate-900">
+              <div class="text-slate-600">// Admin senkronizasyon logları burada görüntülenecektir.</div>
+            </div>
           </div>
         </div>
       </div>
@@ -269,43 +409,46 @@
 
   </main>
 
-  <!-- Footer Section (User Request Specification) -->
+  <!-- Footer Section -->
   <footer class="border-t border-slate-800/80 bg-slate-950 mt-16 py-10 relative z-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
-      <!-- Sistem Adı -->
       <div class="text-sm sm:text-base font-semibold text-slate-200 tracking-wide">
-        Sistem adı: <span class="text-blue-400 font-bold">Antikor 8.0 - Kahta Taziye Sistemi</span>
+        Sistem adı: <span class="text-blue-400 font-bold">Antikor 8.0 - Adıyaman & İlçeleri Taziye Otomasyonu</span>
       </div>
 
-      <!-- Hazırlayanlar -->
       <div class="text-xs sm:text-sm text-slate-400">
         Hazırlayanlar: <strong class="text-slate-300 font-medium">Muhammed Yasin KORKUT</strong> ve <strong class="text-slate-300 font-medium">Tahircan ASLAN</strong>
       </div>
 
-      <!-- Telif Hakkı -->
       <div class="text-xs text-slate-500 pt-1">
-        © 2023 Korkut Teknoloji, Yazılım ve Medya A.Ş. Tüm hakları saklıdır.
+        © 2026 Korkut Teknoloji, Yazılım ve Medya A.Ş. Tüm hakları saklıdır.
       </div>
     </div>
   </footer>
 
-  <!-- Client-side Logic to Fetch Live Taziyeler -->
+  <!-- Script Logic -->
   <script>
     let rawTaziyeler = [];
+    let currentDistrictFilter = 'tumu';
+
+    const DISTRICT_BADGES = {
+      kahta: { bg: 'bg-blue-500/10', text: 'text-blue-400', border: 'border-blue-500/20', name: 'Kahta' },
+      besni: { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/20', name: 'Besni' },
+      merkez: { bg: 'bg-purple-500/10', text: 'text-purple-400', border: 'border-purple-500/20', name: 'Merkez' },
+    };
 
     async function fetchTaziyeler() {
-      const container = document.getElementById('taziyeler-container');
       const badge = document.getElementById('ilan-sayisi-badge');
-      
       try {
         badge.textContent = 'Yükleniyor...';
-        const res = await fetch('/api/taziyeler');
+        const url = currentDistrictFilter === 'tumu' ? '/api/taziyeler' : `/api/taziyeler?ilce=${currentDistrictFilter}`;
+        const res = await fetch(url);
         const data = await res.json();
         
         if (data.success && Array.isArray(data.data)) {
           rawTaziyeler = data.data;
           badge.textContent = `${rawTaziyeler.length} Aktif İlan`;
-          renderTaziyeler(rawTaziyeler);
+          filterAndRender();
         } else {
           showEmptyState('Taziye kaydı bulunamadı veya veri alınamadı.');
           badge.textContent = '0 İlan';
@@ -317,86 +460,133 @@
       }
     }
 
+    function setDistrictFilter(district) {
+      currentDistrictFilter = district;
+      // Tab butonlarının stillerini güncelle
+      document.querySelectorAll('#ilce-tabs .tab-btn').forEach(btn => {
+        const d = btn.getAttribute('data-district');
+        if (d === district) {
+          btn.className = 'tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-blue-600 text-white';
+        } else {
+          btn.className = 'tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition';
+        }
+      });
+      fetchTaziyeler();
+    }
+
+    function filterAndRender() {
+      const search = document.getElementById('arama-input').value.toLowerCase().trim();
+      let filtered = rawTaziyeler;
+
+      if (search) {
+        filtered = filtered.filter(item => {
+          return (item.adSoyad && item.adSoyad.toLowerCase().includes(search)) ||
+                 (item.ilceAdi && item.ilceAdi.toLowerCase().includes(search)) ||
+                 (item.taziyeEvi && item.taziyeEvi.toLowerCase().includes(search)) ||
+                 (item.yakiniAdSoyad && item.yakiniAdSoyad.toLowerCase().includes(search)) ||
+                 (item.definYeri && item.definYeri.toLowerCase().includes(search));
+        });
+      }
+
+      renderTaziyeler(filtered);
+    }
+
     function renderTaziyeler(list) {
       const container = document.getElementById('taziyeler-container');
       if (!list || list.length === 0) {
-        showEmptyState('Aramanıza uygun taziye ilanı bulunamadı.');
+        showEmptyState('Aramanıza veya seçilen ilçeye uygun taziye ilanı bulunamadı.');
         return;
       }
 
-      container.innerHTML = list.map(item => `
-        <div class="glass-card p-6 rounded-2xl flex flex-col justify-between transition hover:-translate-y-1 duration-200">
-          <div>
-            <div class="flex items-start justify-between gap-2 mb-3">
-              <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
-                ${item.vefatTarihi || 'Tarih Belirtilmemiş'}
-              </span>
-              ${item.yas ? `<span class="text-xs font-medium text-slate-400">Yaş: ${item.yas}</span>` : ''}
+      container.innerHTML = list.map(item => {
+        const ilceKey = (item.ilce || 'kahta').toLowerCase();
+        const badgeInfo = DISTRICT_BADGES[ilceKey] || { bg: 'bg-slate-800', text: 'text-slate-300', border: 'border-slate-700', name: item.ilceAdi || ilceKey };
+
+        return `
+          <div class="glass-card p-6 rounded-2xl flex flex-col justify-between transition hover:-translate-y-1 duration-200">
+            <div>
+              <div class="flex items-start justify-between gap-2 mb-3">
+                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${badgeInfo.bg} ${badgeInfo.text} border ${badgeInfo.border}">
+                  📍 ${badgeInfo.name}
+                </span>
+                <span class="text-xs font-medium text-slate-400">
+                  ${item.vefatTarihi || 'Tarih Belirtilmemiş'}
+                </span>
+              </div>
+
+              <h3 class="text-lg font-bold text-white mb-1 tracking-tight">
+                ${escapeHtml(item.adSoyad || 'İsimsiz')}
+                ${item.yas ? `<span class="text-xs font-normal text-slate-400 ml-1">(${item.yas} yaş)</span>` : ''}
+              </h3>
+
+              ${item.taziyeGunu ? `
+                <div class="mb-2">
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                    🗓️ ${escapeHtml(item.taziyeGunu)}
+                  </span>
+                </div>
+              ` : ''}
+
+              <div class="space-y-2 text-xs text-slate-300 mt-3 border-t border-slate-800/80 pt-3">
+                ${item.taziyeEvi || item.taziyeAdresi ? `
+                  <div class="flex items-start gap-2">
+                    <span class="text-slate-400 min-w-4 text-sm">📍</span>
+                    <div>
+                      <span class="text-slate-400">Taziye Yeri:</span>
+                      <span class="font-medium text-slate-200 ml-1">${escapeHtml(item.taziyeEvi || item.taziyeAdresi)}</span>
+                    </div>
+                  </div>
+                ` : ''}
+
+                ${item.cenazeNamazi ? `
+                  <div class="flex items-start gap-2">
+                    <span class="text-slate-400 min-w-4 text-sm">🕌</span>
+                    <div>
+                      <span class="text-slate-400">Cenaze Namazı:</span>
+                      <span class="font-medium text-slate-200 ml-1">${escapeHtml(item.cenazeNamazi)}</span>
+                    </div>
+                  </div>
+                ` : ''}
+
+                ${item.definYeri ? `
+                  <div class="flex items-start gap-2">
+                    <span class="text-slate-400 min-w-4 text-sm">🪦</span>
+                    <div>
+                      <span class="text-slate-400">Defin Yeri:</span>
+                      <span class="font-medium text-slate-200 ml-1">${escapeHtml(item.definYeri)}</span>
+                    </div>
+                  </div>
+                ` : ''}
+
+                ${item.yakiniAdSoyad ? `
+                  <div class="flex items-start gap-2">
+                    <span class="text-slate-400 min-w-4 text-sm">👤</span>
+                    <div>
+                      <span class="text-slate-400">Yakını:</span>
+                      <span class="font-medium text-slate-200 ml-1">${escapeHtml(item.yakiniAdSoyad)} ${item.yakinlik ? '(' + escapeHtml(item.yakinlik) + ')' : ''}</span>
+                    </div>
+                  </div>
+                ` : ''}
+
+                ${item.ayrintiliYakinlik ? `
+                  <div class="text-[11px] text-slate-400 italic pt-1 border-t border-slate-800/40">
+                    ${escapeHtml(item.ayrintiliYakinlik)}
+                  </div>
+                ` : ''}
+              </div>
             </div>
 
-            <h3 class="text-lg font-bold text-white mb-2 tracking-tight">
-              ${escapeHtml(item.adSoyad || 'İsimsiz')}
-            </h3>
-
-            <div class="space-y-2 text-xs text-slate-300 mt-4 border-t border-slate-800/80 pt-3">
-              ${item.taziyeEvi ? `
-                <div class="flex items-start gap-2">
-                  <span class="text-slate-400 min-w-4 text-sm">📍</span>
-                  <div>
-                    <span class="text-slate-400">Taziye Evi:</span>
-                    <span class="font-medium text-slate-200 ml-1">${escapeHtml(item.taziyeEvi)}</span>
-                  </div>
-                </div>
-              ` : ''}
-
-              ${item.cenazeNamazi ? `
-                <div class="flex items-start gap-2">
-                  <span class="text-slate-400 min-w-4 text-sm">🕌</span>
-                  <div>
-                    <span class="text-slate-400">Cenaze Namazı:</span>
-                    <span class="font-medium text-slate-200 ml-1">${escapeHtml(item.cenazeNamazi)}</span>
-                  </div>
-                </div>
-              ` : ''}
-
-              ${item.definYeri ? `
-                <div class="flex items-start gap-2">
-                  <span class="text-slate-400 min-w-4 text-sm">🪦</span>
-                  <div>
-                    <span class="text-slate-400">Defin Yeri:</span>
-                    <span class="font-medium text-slate-200 ml-1">${escapeHtml(item.definYeri)}</span>
-                  </div>
-                </div>
-              ` : ''}
-
-              ${item.yakiniAdSoyad ? `
-                <div class="flex items-start gap-2">
-                  <span class="text-slate-400 min-w-4 text-sm">👤</span>
-                  <div>
-                    <span class="text-slate-400">Yakını:</span>
-                    <span class="font-medium text-slate-200 ml-1">${escapeHtml(item.yakiniAdSoyad)} ${item.yakinlik ? '(' + escapeHtml(item.yakinlik) + ')' : ''}</span>
-                  </div>
-                </div>
-              ` : ''}
-
-              ${item.ayrintiliYakinlik ? `
-                <div class="text-[11px] text-slate-400 italic pt-1 border-t border-slate-800/40">
-                  ${escapeHtml(item.ayrintiliYakinlik)}
-                </div>
-              ` : ''}
-            </div>
+            ${item.yakiniGsm ? `
+              <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between">
+                <span class="text-[11px] text-slate-400">İletişim:</span>
+                <a href="tel:${item.yakiniGsm.replace(/\s+/g, '')}" class="text-xs font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                  <span>📞 ${escapeHtml(item.yakiniGsm)}</span>
+                </a>
+              </div>
+            ` : ''}
           </div>
-
-          ${item.yakiniGsm ? `
-            <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between">
-              <span class="text-[11px] text-slate-400">İletişim:</span>
-              <a href="tel:${item.yakiniGsm.replace(/\s+/g, '')}" class="text-xs font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1">
-                <span>📞 ${escapeHtml(item.yakiniGsm)}</span>
-              </a>
-            </div>
-          ` : ''}
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function showEmptyState(msg) {
@@ -420,23 +610,97 @@
     }
 
     // Arama filtreleme
-    document.getElementById('arama-input').addEventListener('input', (e) => {
-      const term = e.target.value.toLowerCase().trim();
-      if (!term) {
-        renderTaziyeler(rawTaziyeler);
-        return;
-      }
-      const filtered = rawTaziyeler.filter(item => {
-        return (item.adSoyad && item.adSoyad.toLowerCase().includes(term)) ||
-               (item.taziyeEvi && item.taziyeEvi.toLowerCase().includes(term)) ||
-               (item.yakiniAdSoyad && item.yakiniAdSoyad.toLowerCase().includes(term)) ||
-               (item.definYeri && item.definYeri.toLowerCase().includes(term));
-      });
-      renderTaziyeler(filtered);
+    document.getElementById('arama-input').addEventListener('input', () => {
+      filterAndRender();
     });
 
     document.getElementById('yenile-btn').addEventListener('click', () => {
       fetchTaziyeler();
+    });
+
+    // Admin Senkronizasyon Tetikleme
+    async function triggerSync(ilce) {
+      const consoleEl = document.getElementById('sync-console');
+      const timerEl = document.getElementById('sync-timer');
+      timerEl.textContent = 'Senkronize ediliyor...';
+
+      const targetUrl = ilce === 'all' ? '/api/sync' : `/api/sync?ilce=${ilce}`;
+      const logLine = document.createElement('div');
+      logLine.className = 'text-blue-400';
+      logLine.textContent = `[${new Date().toLocaleTimeString()}] Başlatılıyor: ${ilce.toUpperCase()}...`;
+      consoleEl.prepend(logLine);
+
+      try {
+        const res = await fetch(targetUrl);
+        const data = await res.json();
+        
+        const resLine = document.createElement('div');
+        if (data.success) {
+          resLine.className = 'text-emerald-400 font-semibold';
+          resLine.textContent = `[${new Date().toLocaleTimeString()}] ✅ ${ilce.toUpperCase()} Senkronizasyon Başarılı! Toplam: ${data.result?.toplamBulunan || 0}, Yeni Eklenen: ${data.result?.yeniEklenenler || 0}, Bildirim: ${data.result?.bildirimGonderilenler || 0}`;
+          timerEl.textContent = 'Tamamlandı';
+          fetchTaziyeler();
+        } else {
+          resLine.className = 'text-rose-400';
+          resLine.textContent = `[${new Date().toLocaleTimeString()}] ❌ Hata: ${data.message || 'Bilinmeyen hata'}`;
+          timerEl.textContent = 'Hata';
+        }
+        consoleEl.prepend(resLine);
+      } catch (err) {
+        const errLine = document.createElement('div');
+        errLine.className = 'text-rose-400';
+        errLine.textContent = `[${new Date().toLocaleTimeString()}] ❌ Bağlantı hatası: ${err.message}`;
+        consoleEl.prepend(errLine);
+        timerEl.textContent = 'Hata';
+      }
+    }
+
+    // Admin Manuel Taziye Ekleme Formu
+    document.getElementById('admin-add-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const statusEl = document.getElementById('form-status');
+      const submitBtn = document.getElementById('form-submit-btn');
+
+      const payload = {
+        ilce: document.getElementById('form-ilce').value,
+        adSoyad: document.getElementById('form-adSoyad').value,
+        yas: document.getElementById('form-yas').value,
+        vefatTarihi: document.getElementById('form-vefatTarihi').value || new Date().toLocaleDateString('tr-TR'),
+        taziyeEvi: document.getElementById('form-taziyeEvi').value,
+        definYeri: document.getElementById('form-definYeri').value,
+        yakiniAdSoyad: document.getElementById('form-yakiniAdSoyad').value,
+        yakiniGsm: document.getElementById('form-yakiniGsm').value,
+        bildirimGonder: document.getElementById('form-bildirimGonder').checked,
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Kaydediliyor...';
+      statusEl.className = 'text-xs text-center text-blue-400 block';
+      statusEl.textContent = 'Kayıt ve bildirim işleniyor...';
+
+      try {
+        const res = await fetch('/api/admin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const resData = await res.json();
+        if (resData.success) {
+          statusEl.className = 'text-xs text-center text-emerald-400 font-bold block';
+          statusEl.textContent = `✅ Başarıyla Eklendi! ${resData.notificationSent ? '(Push bildirimi gönderildi)' : ''}`;
+          document.getElementById('admin-add-form').reset();
+          fetchTaziyeler();
+        } else {
+          statusEl.className = 'text-xs text-center text-rose-400 font-bold block';
+          statusEl.textContent = `❌ Hata: ${resData.message}`;
+        }
+      } catch (err) {
+        statusEl.className = 'text-xs text-center text-rose-400 font-bold block';
+        statusEl.textContent = `❌ İstek hatası: ${err.message}`;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '🚀 Firestore\'a Ekle & Bildirim Gönder';
+      }
     });
 
     // İlk yükleme

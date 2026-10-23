@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'http';
-import { scrapeTaziyeler } from '../src/scraper';
+import { scrapeTaziyeler } from '../src/scrapers';
 
 interface VercelRequest extends IncomingMessage {
   query: { [key: string]: string | string[] | undefined };
@@ -19,10 +19,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
+  const rawIlce = (req.query?.ilce || req.query?.district) as string | undefined;
+
   try {
-    const list = await scrapeTaziyeler();
+    const list = await scrapeTaziyeler(rawIlce);
     res.status(200).json({
       success: true,
+      ilce: rawIlce || 'tumu',
       count: list.length,
       data: list,
     });

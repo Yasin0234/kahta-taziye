@@ -1,158 +1,222 @@
-# 🕊️ Antikor 8.0 Taziye Sistemi
+# 🕊️ Antikor 8.0 - Adıyaman & İlçeleri Taziye Otomasyon Ekosistemi
 
 > **Bu proje Antikor 8.0 Taziye Sistemidir.**
 
-Bu sistem, [taziye.kahta.bel.tr](https://taziye.kahta.bel.tr/) üzerindeki taziye ilanlarını **7/24 saatlik periyotlarla** tarayan, yüksek hızlı paralel kazıma (scraping) motoru ile saniyeler içinde işleyen, **Cloud Firestore** veritabanına otomatik senkronize eden ve Google Play'deki **Android (Java)** mobil uygulamanıza **Firebase Cloud Messaging (FCM)** üzerinden anlık push bildirim gönderen yüksek erişilebilirlikli, sunucusuz (serverless) bir otomasyon ve yönetim ekosistemidir.
+Bu sistem; **Kahta**, **Besni** ve **Adıyaman Merkez** belediyelerinin resmi taziye portallarını **7/24 saatlik periyotlarla** otomatik tarayan, her ilçeyi kendi bağımsız **FCM Push Bildirim Konularına (Topics)** ileten, ortak **Cloud Firestore** veritabanına mükerrersiz senkronize eden ve gelecekte yayınlanacak olan **Kahta Güncel Cepte**, **Besni Güncel Cepte**, **Adıyaman Güncel Cepte** mobil uygulamaları ile **Adıyaman Güncel Admin** yönetim panelini tek merkezden besleyen kurumsal, modüler ve sunucusuz (serverless) bir otomasyon omurgasıdır.
 
 ---
 
-## 🏛️ Uçtan Uca Sistem Mimarisi
+## 🏛️ Uçtan Uca Çoklu İlçe (Multi-District) Mimarisi
 
 ```mermaid
 flowchart TD
-    subgraph VeriKaynagi["🏛️ Veri Kaynağı"]
-        Portal["taziye.kahta.bel.tr<br/>Kahta Belediyesi Resmi Taziye Portalı"]
+    subgraph VeriKaynaklari["🏛️ Resmi Belediye Portalları"]
+        PortalKahta["taziye.kahta.bel.tr<br/>Kahta Belediyesi"]
+        PortalBesni["besni.bel.tr/sayfa/VefatEdenler<br/>Besni Belediyesi"]
+        PortalMerkez["adiyaman.bel.tr/TAZIYE-ILANLARI<br/>Adıyaman Belediyesi (Merkez)"]
     end
 
-    subgraph ZamanlayiciKatmani["⏰ 7/24 Otomasyon & Tetikleyici"]
+    subgraph Tetikleyici["⏰ 7/24 Otomasyon & Tetikleyici"]
         GHACron["GitHub Actions Cron Job<br/>(0 * * * * - Her Saat Başı)"]
     end
 
-    subgraph BackendServerless["⚡ Vercel Serverless Altyapısı (Node.js & TypeScript)"]
+    subgraph BackendServerless["⚡ Vercel Serverless Scraper & Sync Engine (TypeScript)"]
         direction TB
-        Auth["Güvenlik Doğrulaması<br/>(Bearer CRON_SECRET)"]
-        Scraper["Paralel Scraper Motoru<br/>(Promise.all & Cheerio - ~4.4 sn)"]
-        Deduplicator["Mükerrerlik & Fark Motoru<br/>(kahta_ID Kontrolü)"]
-        FCMService["FCM Bildirim Servisi<br/>(Topic: /topics/taziyeler)"]
-        SyncAPI["/api/sync Endpoint'i"]
-        PublicAPI["/api/taziyeler Endpoint'i"]
+        Auth["Güvenlik Doğrulaması (CRON_SECRET)"]
+        ScraperRegistry["Çoklu İlçe Scraper Kayıt Defteri"]
+        ScraperKahta["Kahta Scraper<br/>(HTML + modal.php)"]
+        ScraperBesni["Besni Scraper<br/>(GridView + Slug Deduplication)"]
+        ScraperMerkez["Adıyaman Merkez Scraper<br/>(card-taziye + xgetData.php)"]
+        Deduplicator["Mükerrerlik & Fark Motoru<br/>({ilce}_{id} Doğrulaması)"]
+        FCMService["İlçeye Özel FCM Dağıtım Motoru"]
     end
 
     subgraph FirebaseCloud["🔥 Google Firebase Ekosistemi"]
-        Firestore[("Cloud Firestore<br/>'taziyeler' Koleksiyonu")]
-        FCMTopic["FCM Topic Engine<br/>(/topics/taziyeler)"]
+        Firestore[("Cloud Firestore<br/>'taziyeler' Koleksiyonu<br/>(ilce: kahta | besni | merkez)")]
+        subgraph FCMTopics["📢 Bağımsız FCM Bildirim Konuları"]
+            TopicKahta["/topics/taziyeler_kahta"]
+            TopicBesni["/topics/taziyeler_besni"]
+            TopicMerkez["/topics/taziyeler_merkez"]
+            TopicAll["/topics/taziyeler_all"]
+        end
     end
 
-    subgraph MobilEkosistem["📱 Android Mobil Uygulama Ekosistemi"]
+    subgraph UygulamaEkosistemi["📱 Mobil Uygulamalar & Merkezi Admin"]
         direction TB
-        UserApp["📱 Kahta Güncel Cepte (Son Kullanıcı)<br/>- Otomatik /topics/taziyeler Aboneliği<br/>- Zengin Detay Ekranı & Arama<br/>- Hibrit Çift Şema Desteği"]
-        AdminApp["🛠️ Kahta Güncel Admin (Yönetici Paneli)<br/>- Otomatik & Manuel İlan Ayrımı<br/>- Kaynak Filtreleme (Belediye / Admin)<br/>- İlan Düzenleme & Silme<br/>- Manuel FCM Bildirim Gönder Butonu"]
+        AdminApp["🛠️ Adıyaman Güncel Admin (Merkezi Kontrol Paneli)<br/>- Tüm Adıyaman'ı tek ekrandan görme & yönetme<br/>- İlçe bazlı filtreleme (Kahta, Besni, Merkez)<br/>- Manuel taziye girişi & anında FCM bildirim fırlatma<br/>- Arşivleme, silme ve düzenleme"]
+        AppKahta["📱 Kahta Güncel Cepte<br/>- Sadece Kahta taziyeleri<br/>- Dinlenen: /topics/taziyeler_kahta"]
+        AppBesni["📱 Besni Güncel Cepte<br/>- Sadece Besni taziyeleri<br/>- Dinlenen: /topics/taziyeler_besni"]
+        AppMerkez["📱 Adıyaman Güncel Cepte<br/>- Merkez veya tüm il taziyeleri<br/>- Dinlenen: /topics/taziyeler_merkez"]
     end
 
     %% Akışlar
-    GHACron -->|"1. Saatlik HTTP GET + Bearer CRON_SECRET"| SyncAPI
-    SyncAPI --> Auth
-    Auth -->|"Yetki Onaylandı"| Scraper
-    Portal <-->|"2. Hızlı Paralel Veri Çekimi (HTML + modal.php)"| Scraper
-    Scraper -->|"3. Ayrıştırılmış Taziye Kayıtları"| Deduplicator
-    Deduplicator <-->|"4. Belge Mevcutluk Kontrolü (exists)"| Firestore
-    Deduplicator -->|"5. Sadece Yeni Kayıtları Yaz"| Firestore
-    Deduplicator -->|"6. Yeni Kayıt Varsa Bildirim Tetikle"| FCMService
-    FCMService -->|"7. Toplu Push Bildirim İlet"| FCMTopic
+    GHACron -->|"Saatlik Tetikleme"| Auth
+    Auth --> ScraperRegistry
+    ScraperRegistry --> ScraperKahta & ScraperBesni & ScraperMerkez
+    PortalKahta <--> ScraperKahta
+    PortalBesni <--> ScraperBesni
+    PortalMerkez <--> ScraperMerkez
 
-    FCMTopic -->|"8. Anlık Push Bildirimi"| UserApp
-    Firestore <-->|"Gerçek Zamanlı Okuma / Listeleme"| UserApp
-    Firestore <-->|"İlan Ekleme, Güncelleme & Silme"| AdminApp
-    AdminApp -.->|"Gerektiğinde Manuel Bildirim Tetikle"| FCMTopic
-    PublicAPI --> Scraper
+    ScraperKahta & ScraperBesni & ScraperMerkez --> Deduplicator
+    Deduplicator <-->|"Varlık Kontrolü"| Firestore
+    Deduplicator -->|"Sadece Yeni İlanları Yaz"| Firestore
+    Deduplicator -->|"Yeni İlan Varsa Tetikle"| FCMService
+
+    FCMService -->|"Kahta İlanı"| TopicKahta
+    FCMService -->|"Besni İlanı"| TopicBesni
+    FCMService -->|"Merkez İlanı"| TopicMerkez
+    FCMService -.->|"İsteğe Bağlı Genel İlan"| TopicAll
+
+    TopicKahta --> AppKahta
+    TopicBesni --> AppBesni
+    TopicMerkez --> AppMerkez
+
+    Firestore <-->|"where('ilce', '==', 'kahta')"| AppKahta
+    Firestore <-->|"where('ilce', '==', 'besni')"| AppBesni
+    Firestore <-->|"where('ilce', '==', 'merkez')"| AppMerkez
+    Firestore <-->|"Tüm İli Sorgula & Yönet"| AdminApp
+    AdminApp -.->|"Manuel Bildirim Tetikle"| FCMTopics
 ```
 
 ---
 
-## ⚡ Ekosistem Bileşenleri ve Yetenekleri
+## 📌 Desteklenen İlçeler ve Kaynak Detayları
 
-### 1. 🤖 Backend Scraper & Sync Engine (`d:\antikor-taziye`)
-- **Yüksek Hızlı Paralel Kazıma:** Sıralı döngü yerine `Promise.all` ile eş zamanlı HTTP istekleri yaparak 18 ilanın tüm detaylarını (cenaze namazı, defin yeri, mezarlık, taziye evi, akrabalık bağları vb.) **26 saniye yerine sadece ~4.40 saniyede** eksiksiz çeker.
-- **Vercel Serverless Güvencesi:** `vercel.json` üzerinde tanımlı `maxDuration: 60` ayarı sayesinde zaman aşımı (timeout) riski ortadan kaldırılmıştır.
-- **Akıllı Mükerrer Kayıt Önleme (Deduplication):** Belediye ID'sini (`kahta_813` vb.) Document ID olarak kullanır. Sistem veritabanında zaten var olan kayıtları atlar ve asla mükerrer bildirim göndermez.
-- **Güvenli Erişim:** `/api/sync` uç noktası `Bearer CRON_SECRET` başlığı ile yetkilendirilmemiş isteklere karşı korunur.
-
-### 2. ⏰ 7/24 Kesintisiz GitHub Actions Cron (`.github/workflows/cron.yml`)
-- **Saatlik Otomasyon:** `0 * * * *` cron kuralı ile her saat başı tetiklenir.
-- **Sıfır Maliyet:** Bilgisayarınız kapalı olsa dahi bulutta 7/24 tamamen ücretsiz çalışır.
-
-### 3. 🛠️ Kahta Güncel Admin Uygulaması (`kahtagunceladmin`)
-- **Çift Şema (Dual-Schema) Uyumluluğu:** Hem botun eklediği yeni alanları (`adSoyad`, `yas`, `yakiniGsm`, `taziyeEvi`) hem de eski admin paneli alanlarını (`vefatEden`, `yasi`, `yakiniTel`, `taziyeYeri`) hibrit getter fonksiyonları ile sorunsuz okur ve günceller.
-- **Kaynak Ayrımı & Rozetler:** İlanların belediye botu tarafından mı (`belediye_otomatik`) yoksa yönetici tarafından mı (`admin_manuel`) eklendiği renkli rozetlerle listelenir.
-- **Gelişmiş Filtreleme:** Üst barda yer alan sekmelerle *Tümü*, *Belediye (Bot)* veya *Admin (Manuel)* filtrelenebilir.
-- **Manuel FCM Bildirim Tetikleme:** Güncelleme ekranında yer alan **"Bildirim Gönder"** butonu sayesinde, istenildiğinde kayıtlı kullanıcılara tek tıkla FCM bildirimi yeniden iletilebilir.
-
-### 4. 📱 Kahta Güncel Cepte Kullanıcı Uygulaması (`KahtaGncelCeptee`)
-- **Otomatik Topic Aboneliği:** Uygulama açılışında `MainActivity.java` içinde kullanıcılar arka planda `FirebaseMessaging.getInstance().subscribeToTopic("taziyeler")` konusuna otomatik abone edilir.
-- **Zengin Taziye Detayı:** Vefat edenin yaşı, cenaze namazı vakti/yeri, defin mezarlığı, taziye evi adresi, taziye yakını ve telefon numarası (tek tıkla arama) modern kart tasarımında sunulur.
+| İlçe | Kaynak URL | Kazıma Yöntemi | Üretilen Benzersiz ID | FCM Bildirim Konusu | Hedef Mobil Uygulama |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Kahta** | `https://taziye.kahta.bel.tr` | Ana kartlar + `modal.php` POST | `kahta_{belediyeId}` | `taziyeler_kahta` (ve `taziyeler`) | Kahta Güncel Cepte |
+| **Besni** | `https://besni.bel.tr/sayfa/VefatEdenler` | ASP.NET `.vefat` ayrıştırma + Telefon regex | `besni_{slug}-{hash}` | `taziyeler_besni` | Besni Güncel Cepte |
+| **Adıyaman Merkez** | `https://adiyaman.bel.tr/TAZIYE-ILANLARI` | `.card-taziye` + `xgetData.php` POST | `merkez_{id}` | `taziyeler_merkez` | Adıyaman Güncel Cepte |
 
 ---
 
-## 📦 Firestore Hibrit Veri Modeli
+## 🛠️ "Adıyaman Güncel Admin" Merkezi Kontrol Altyapısı
 
-Firestore `taziyeler` koleksiyonundaki her belgenin veri yapısı:
+Kullanıcı gereksinimi doğrultusunda **Adıyaman Güncel Admin** paneli, Adıyaman iline bağlı tüm ilçeleri tek bir çatı altından yönetebilir:
 
-```json
-{
-  "id": "kahta_813",
-  "belediyeId": "813",
-  "adSoyad": "MEHMET SİNAN KURT",
-  "vefatEden": "MEHMET SİNAN KURT",
-  "yas": "64",
-  "yasi": "64",
-  "vefatTarihi": "20.10.2026",
-  "yakiniAdSoyad": "MEHMET KURT",
-  "yakinlik": "BABASI",
-  "yakiniGsm": "0532 123 45 67",
-  "yakiniTel": "0532 123 45 67",
-  "cenazeNamazi": "ÖĞLE NAMAZINA MÜTEAKİP ÇARŞI CAMİİ",
-  "definYeri": "KARŞIYAKA MEZARLIĞI",
-  "definIlIlce": "KAHTA / ADIYAMAN",
-  "taziyeEvi": "CELAL TAZİYE EVİ",
-  "taziyeYeri": "CELAL TAZİYE EVİ",
-  "taziyeAdresi": "Yavuz Selim Mah. Kahta",
-  "ayrintiliYakinlik": "ALİ, HAKAN VE AHMET KURT'UN BABASI",
-  "kaynak": "belediye_otomatik",
-  "durum": "aktif",
-  "olusturulmaTarihi": "2026-10-21T10:45:12.345Z",
-  "olusturulmaTimestamp": "(Firestore ServerTimestamp)"
-}
+1. **Tek Koleksiyon Standardı (`taziyeler`):**
+   - Tüm taziye belgeleri `taziyeler` koleksiyonunda saklanır.
+   - Her belgede `ilce: 'kahta' | 'besni' | 'merkez'` ve `ilceAdi: 'Kahta' | 'Besni' | 'Adıyaman Merkez'` alanları zorunlu olarak yer alır.
+   - **Admin Paneli Sorgusu:**
+     ```typescript
+     // Tüm Adıyaman'daki vefatları en yeniden en eskiye listeleme:
+     db.collection('taziyeler').orderBy('olusturulmaTimestamp', 'desc').limit(50);
+     
+     // Sadece Besni'yi listeleme:
+     db.collection('taziyeler').where('ilce', '==', 'besni').orderBy('olusturulmaTimestamp', 'desc');
+     ```
+
+2. **Manuel İlan & Bildirim Gönderme:**
+   - Admin panelinden manuel vefat ilanı girildiğinde ilçe seçilir (`Kahta`, `Besni`, `Merkez`).
+   - Sistem ilgili ilanın belgesini oluşturur ve **sadece o ilçenin FCM konusuna** (`taziyeler_besni` vb.) yüksek öncelikli bildirim gönderir.
+
+3. **Gelişmiş Filtreleme:**
+   - İlçe bazlı filtreleme: `Tümü`, `Kahta`, `Besni`, `Merkez`.
+   - Durum bazlı filtreleme: `aktif`, `arsiv`.
+   - Kaynak bazlı filtreleme: `belediye_otomatik`, `admin_manuel`.
+
+---
+
+## 📱 Mobil Uygulamalar İçin Android (Java/Kotlin) Entegrasyon Rehberi
+
+### 1. Besni Güncel Cepte
+```java
+// MainActivity.java veya Application sınıfı:
+FirebaseMessaging.getInstance().subscribeToTopic("taziyeler_besni");
+
+// Firestore'dan sadece Besni taziyelerini çekme:
+FirebaseFirestore.getInstance()
+    .collection("taziyeler")
+    .whereEqualTo("ilce", "besni")
+    .whereEqualTo("durum", "aktif")
+    .orderBy("olusturulmaTimestamp", Query.Direction.DESCENDING)
+    .addSnapshotListener((snapshots, e) -> {
+        // Besni listesini güncelle
+    });
+```
+
+### 2. Adıyaman Güncel Cepte (Merkez & İl Geneli)
+```java
+// Sadece Merkez bildirimleri için:
+FirebaseMessaging.getInstance().subscribeToTopic("taziyeler_merkez");
+// VEYA tüm il genelini dinlemek isterse:
+FirebaseMessaging.getInstance().subscribeToTopic("taziyeler_all");
+
+// Firestore'dan listeleme (Merkez veya tüm il):
+FirebaseFirestore.getInstance()
+    .collection("taziyeler")
+    .whereEqualTo("ilce", "merkez")
+    .orderBy("olusturulmaTimestamp", Query.Direction.DESCENDING)
+    ...
+```
+
+### 3. Kahta Güncel Cepte
+```java
+FirebaseMessaging.getInstance().subscribeToTopic("taziyeler_kahta");
+// Geriye dönük uyumluluk için eski "taziyeler" konusu da sistem tarafından desteklenmektedir.
 ```
 
 ---
 
-## 🔑 Ortam Değişkenleri ve Kurulum
+## 🔌 Geliştirici API Uç Noktaları
 
-### 1. Vercel Dashboard Ayarları
-Vercel projenizin **Settings > Environment Variables** menüsünden aşağıdaki anahtarları tanımlayın:
-
-| Anahtar Adı | Örnek Değer | Açıklama |
-| :--- | :--- | :--- |
-| `CRON_SECRET` | `kahta_taziye_guvenlik_anahtari_2026` | Senkronizasyon endpoint'ini koruyan güvenlik anahtarı |
-| `FIRESTORE_COLLECTION` | `taziyeler` | Firestore'da taziye kayıtlarının tutulduğu koleksiyon |
-| `FCM_TOPIC` | `taziyeler` | Kullanıcıların abone olduğu bildirim topic adı |
-| `FIREBASE_SERVICE_ACCOUNT` | `{"type": "service_account", ...}` | Firebase Admin SDK JSON dosyasının metin içeriği |
-
-### 2. GitHub Secrets Ayarları
-GitHub deponuzun (`Yasin0234/kahta-taziye`) **Settings > Secrets and variables > Actions** sayfasına gidin:
-- **Secret Name:** `CRON_SECRET`
-- **Secret Value:** `kahta_taziye_guvenlik_anahtari_2026`
-
----
-
-## 🌐 API Uç Noktaları
-
-| Uç Nokta | Metot | Açıklama | Yetki |
+| Uç Nokta | Metot | Açıklama | Parametreler |
 | :--- | :--- | :--- | :--- |
-| `/api/sync` | `GET` / `POST` | Taziye taramasını başlatır, Firestore'a kaydeder ve FCM bildirimi atar. | `CRON_SECRET` (Bearer Token) Gerekli |
-| `/api/taziyeler` | `GET` | Belediye sitesindeki mevcut ilanları ham JSON olarak listeler. | Herkese Açık |
+| `/api/taziyeler` | `GET` | Belediyelerden canlı çekilen ham taziye verilerini döner. | `?ilce=besni`, `?ilce=merkez`, `?ilce=kahta` (boşsa tümü) |
+| `/api/sync` | `GET / POST` | Otomasyon taramasını başlatır, Firestore'a senkronize eder ve yeni kayıtlar için FCM bildirimi gönderir. | `?ilce=besni` (opsiyonel), `Bearer CRON_SECRET` |
+| `/api/list` | `GET` | Firestore'da kayıtlı taziyeleri ilçe ve duruma göre filtreleyerek listeler. | `?ilce=besni`, `?durum=aktif`, `?limit=50` |
+| `/api/admin` | `POST` | Admin panelinden manuel taziye ekler ve ilçeye anında FCM bildirimi gönderir. | JSON body + `Bearer ADMIN_SECRET` |
+| `/api/admin` | `PUT / DELETE` | Var olan taziyeyi arşivler, günceller veya siler. | JSON body + `Bearer ADMIN_SECRET` |
 
 ---
 
-## 👥 Proje Ekibi & Geliştiriciler
+## 🚀 Yerel Geliştirme ve Test Komutları
 
-- **Muhammed Yasin KORKUT**
-- **Tahircan ASLAN**
+```bash
+# Bağımlılıkları yükleyin
+npm install
+
+# Tüm ilçelerin canlı scraper'larını test edin (Kahta, Besni, Merkez):
+npm run test:scrape
+
+# Yerel ortamda senkronizasyon ve bildirim testini çalıştırın:
+npm run dev
+
+# Sadece tek bir ilçeyi yerel olarak senkronize etmek için:
+npx ts-node src/cli.ts --ilce=besni
+npx ts-node src/cli.ts --ilce=merkez
+npx ts-node src/cli.ts --ilce=kahta
+
+# TypeScript derlemesini kontrol edin:
+npm run build
+```
 
 ---
 
-## 📄 Lisans & Telif Hakkı
+## 🔒 Ortam Değişkenleri (.env)
 
-Bu yazılım [MIT Lisansı](LICENSE) kapsamında lisanslanmıştır.
+```env
+# Firebase Yönetici Kimliği (JSON string veya Base64)
+FIREBASE_SERVICE_ACCOUNT='{"type":"service_account","project_id":"...","private_key":"...","client_email":"..."}'
 
-**© 2023 - 2026 Korkut Teknoloji, Yazılım ve Medya A.Ş.** Tüm hakları saklıdır.
+# Koleksiyon Adı
+FIRESTORE_COLLECTION="taziyeler"
+
+# İlçelere Özel FCM Konuları
+FCM_TOPIC_KAHTA="taziyeler_kahta"
+FCM_TOPIC_BESNI="taziyeler_besni"
+FCM_TOPIC_MERKEZ="taziyeler_merkez"
+FCM_TOPIC="taziyeler"
+FCM_TOPIC_ALL="taziyeler_all"
+
+# Güvenlik Anahtarları
+CRON_SECRET="guvenlik_anahtari_2026"
+ADMIN_SECRET="admin_anahtari_2026"
+```
+
+---
+
+## 👥 Proje Künyesi
+- **Sistem Adı:** Antikor 8.0 - Adıyaman & İlçeleri Taziye Otomasyon Ekosistemi
+- **Hazırlayanlar:** **Muhammed Yasin KORKUT** ve **Tahircan ASLAN**
+- **Telif Hakkı:** © 2026 Korkut Teknoloji, Yazılım ve Medya A.Ş. Tüm hakları saklıdır.

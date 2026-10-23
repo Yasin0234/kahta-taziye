@@ -5,7 +5,8 @@
   "main": "api/sync.ts",
   "scripts": {
     "dev": "ts-node src/cli.ts",
-    "test:scrape": "ts-node src/test-scraper.ts"
+    "test:scrape": "ts-node src/test-scraper.ts",
+    "build": "tsc"
   },
   "keywords": [
     "taziye",

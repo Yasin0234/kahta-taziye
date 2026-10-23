@@ -1,11 +1,22 @@
-name: Kahta Taziye Otomatik Senkronizasyon
+name: Adıyaman & İlçeleri Taziye Otomatik Senkronizasyon
 
 on:
   schedule:
-    # Her 1 saatte bir (saat başı) otomatik çalışır
+    # Her 1 saatte bir (saat başı) otomatik çalışır (Kahta, Besni, Adıyaman Merkez)
     - cron: '0 * * * *'
-  # GitHub arayüzünden tek tıkla manuel tetikleme imkanı
+  # GitHub arayüzünden manuel veya parametreli tetikleme imkanı
   workflow_dispatch:
+    inputs:
+      ilce:
+        description: 'Taranacak İlçe (all = Tüm Adıyaman)'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - kahta
+          - besni
+          - merkez
 
 jobs:
   sync:
@@ -13,13 +24,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Vercel Sync Endpoint Çağrısı
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          CHOSEN_ILCE: ${{ github.event.inputs.ilce || 'all' }}
         run: |
-          echo "🚀 Kahta Taziye senkronizasyonu başlatılıyor..."
-          TARGET_URL="https://kahta-taziye.vercel.app/api/sync"
+          echo "🚀 Adıyaman Taziye senkronizasyonu başlatılıyor... Hedef İlçe: $CHOSEN_ILCE"
+
+          if [ -z "$CRON_SECRET" ]; then
+            echo "❌ HATA: GitHub Repository Secrets altında 'CRON_SECRET' tanımlanmamış veya boş!"
+            echo "Lütfen GitHub Repo -> Settings -> Secrets and variables -> Actions -> 'New repository secret' adımıyla 'CRON_SECRET' ekleyin."
+            exit 1
+          fi
+
+          if [ "$CHOSEN_ILCE" = "all" ] || [ -z "$CHOSEN_ILCE" ]; then
+            TARGET_URL="https://kahta-taziye.vercel.app/api/sync"
+          else
+            TARGET_URL="https://kahta-taziye.vercel.app/api/sync?ilce=$CHOSEN_ILCE"
+          fi
+
           echo "Hedef URL: $TARGET_URL"
 
           RESPONSE=$(curl -s -L -w "\nHTTP_STATUS:%{http_code}" -X GET "$TARGET_URL" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}")
+            -H "Authorization: Bearer $CRON_SECRET")
           
           HTTP_BODY=$(echo "$RESPONSE" | sed -e '$d')
           HTTP_STATUS=$(echo "$RESPONSE" | tail -n1 | cut -d':' -f2)

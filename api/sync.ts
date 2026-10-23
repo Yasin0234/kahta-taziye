@@ -43,11 +43,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
+  // İlçe parametresi desteği: ?ilce=besni veya ?district=merkez
+  const rawIlce = (req.query?.ilce || req.query?.district) as string | undefined;
+
   try {
-    const result = await syncTaziyeler();
+    const result = await syncTaziyeler(rawIlce);
     res.status(200).json({
       success: true,
       timestamp: new Date().toISOString(),
+      filtre: rawIlce || 'tum_ilceler',
       result,
     });
   } catch (error: any) {
