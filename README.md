@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/logo.svg" alt="Antikor Taziye Logo" width="140" height="140" />
+</p>
+
 # 🕊️ Antikor 8.0 - Adıyaman & İlçeleri Taziye Otomasyon Ekosistemi
 
 > **Bu proje Antikor 8.0 Taziye Sistemidir.**
