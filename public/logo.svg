@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1329" />
+      <stop offset="50%" stop-color="#070a14" />
+      <stop offset="100%" stop-color="#03050a" />
+    </linearGradient>
+
+    <!-- Shield Glow Gradient -->
+    <linearGradient id="shieldGrad" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#2563eb" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#1e1b4b" stop-opacity="0.2" />
+    </linearGradient>
+
+    <!-- Wing & Dove Primary Gradient -->
+    <linearGradient id="doveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="40%" stop-color="#e0f2fe" />
+      <stop offset="100%" stop-color="#93c5fd" />
+    </linearGradient>
+
+    <!-- Subtle Golden-Cyan Accent for Central Light -->
+    <radialGradient id="auraGlow" cx="50%" cy="45%" r="45%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.35" />
+      <stop offset="60%" stop-color="#1d4ed8" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Filters for Glow & Depth -->
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#0284c7" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <!-- Squircle / App Icon Base -->
+  <rect width="512" height="512" rx="118" fill="url(#bgGrad)" />
+  <rect width="510" height="510" x="1" y="1" rx="117" fill="none" stroke="rgba(255, 255, 255, 0.12)" stroke-width="2" />
+  <rect width="506" height="506" x="3" y="3" rx="115" fill="none" stroke="url(#shieldGrad)" stroke-width="1.5" opacity="0.6" />
+
+  <!-- Ambient Central Aura Glow -->
+  <circle cx="256" cy="245" r="190" fill="url(#auraGlow)" />
+
+  <!-- Outer Protective Shield Contour (Antikor Sembolizmi) -->
+  <path d="M 256 95 
+           C 335 125 400 135 400 240 
+           C 400 345 320 405 256 430 
+           C 192 405 112 345 112 240 
+           C 112 135 177 125 256 95 Z" 
+        fill="url(#shieldGrad)" 
+        stroke="rgba(56, 189, 248, 0.4)" 
+        stroke-width="3" 
+        stroke-linejoin="round"
+        opacity="0.85" />
+
+  <!-- Inner Geometric / Bridge Arch (Adıyaman Cendere & Topluluk Bağı) -->
+  <path d="M 160 330 
+           C 200 280 312 280 352 330" 
+        fill="none" 
+        stroke="rgba(147, 197, 253, 0.3)" 
+        stroke-width="4" 
+        stroke-linecap="round" />
+
+  <!-- Minimalist Ascending Dove / Peace Bird (Taziye, Ruh, Saygı) -->
+  <g filter="url(#dropShadow)">
+    <!-- Right Wing (Upper flight) -->
+    <path d="M 256 225 
+             C 275 160 345 140 380 155 
+             C 365 200 325 240 270 250 Z" 
+          fill="url(#doveGrad)" 
+          opacity="0.95" />
+
+    <!-- Left Wing (Spread) -->
+    <path d="M 256 225 
+             C 237 160 167 140 132 155 
+             C 147 200 187 240 242 250 Z" 
+          fill="url(#doveGrad)" 
+          opacity="0.95" />
+
+    <!-- Dove Body & Head (Ascending Form) -->
+    <path d="M 256 165 
+             C 264 165 270 172 270 180 
+             C 270 195 264 220 256 280 
+             C 248 220 242 195 242 180 
+             C 242 172 248 165 256 165 Z" 
+          fill="#ffffff" 
+          filter="url(#softGlow)" />
+
+    <!-- Dove Tail / Light Rays (3 Districts Harmony: Kahta, Besni, Merkez) -->
+    <path d="M 256 280 L 256 360" stroke="#bae6fd" stroke-width="4" stroke-linecap="round" opacity="0.9" />
+    <path d="M 252 285 L 235 345" stroke="#7dd3fc" stroke-width="3" stroke-linecap="round" opacity="0.75" />
+    <path d="M 260 285 L 277 345" stroke="#7dd3fc" stroke-width="3" stroke-linecap="round" opacity="0.75" />
+  </g>
+
+  <!-- Central Light / Soul Bead -->
+  <circle cx="256" cy="180" r="4.5" fill="#ffffff" />
+  <circle cx="256" cy="180" r="10" fill="#38bdf8" opacity="0.4" filter="url(#softGlow)" />
+
+  <!-- 3 Stars / Constellation Points (Merkez, Kahta, Besni Birliği) -->
+  <circle cx="165" cy="185" r="3.5" fill="#e0f2fe" opacity="0.8" />
+  <circle cx="347" cy="185" r="3.5" fill="#e0f2fe" opacity="0.8" />
+  <circle cx="256" cy="130" r="3.5" fill="#e0f2fe" opacity="0.8" />
+</svg>
