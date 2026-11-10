@@ -4,6 +4,13 @@
 
 # 🕊️ Antikor 8.0 - Adıyaman & İlçeleri Taziye Otomasyon Ekosistemi
 
+<p align="center">
+  <a href="https://antikor-kahta-taziye.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/Canlı%20Sistem-antikor--kahta--taziye.vercel.app-2563eb?style=for-the-badge&logo=vercel&logoColor=white" alt="Canlı Sistem Vercel" />
+  </a>
+</p>
+
+> 🌐 **Canlı Web Portalı & API:** [https://antikor-kahta-taziye.vercel.app/](https://antikor-kahta-taziye.vercel.app/)  
 > **Bu proje Antikor 8.0 Taziye Sistemidir.**
 
 Bu sistem; **Kahta**, **Besni** ve **Adıyaman Merkez** belediyelerinin resmi taziye portallarını **7/24 saatlik periyotlarla** otomatik tarayan, her ilçeyi kendi bağımsız **FCM Push Bildirim Konularına (Topics)** ileten, ortak **Cloud Firestore** veritabanına mükerrersiz senkronize eden ve gelecekte yayınlanacak olan **Kahta Güncel Cepte**, **Besni Güncel Cepte**, **Adıyaman Güncel Cepte** mobil uygulamaları ile **Adıyaman Güncel Admin** yönetim panelini tek merkezden besleyen kurumsal, modüler ve sunucusuz (serverless) bir otomasyon omurgasıdır.
